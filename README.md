@@ -6,7 +6,7 @@ RedisTS is a typesafe Go client for [RedisTimeSeries](github.com/RedisTimeSeries
 
 RedisTimeSeries documentation: https://oss.redis.com/redistimeseries/commands/
 
-This library tries to support multiple Redis clients, because applications probably already use one. There are examples in `example_test.go` for `github.com/go-redis/redis/v8`, `github.com/gomodule/redigo`, `github.com/joomcode/redispipe`, and `github.com/mediocregopher/radix/v4` demonstrating how one can create a new RedisTS client using them.
+This library tries to support multiple Redis clients, because applications probably already use one. There are examples in the reference for `github.com/go-redis/redis/v8`, `github.com/gomodule/redigo`, `github.com/joomcode/redispipe`, and `github.com/mediocregopher/radix/v4` demonstrating how one can create a new RedisTS client using them.
 
 ## Focus
 
