@@ -15,7 +15,7 @@ jobs:
 
     services:
       redis:
-        image: redislabs/redistimeseries
+        image: redislabs/redistimeseries:edge
         options: >-
           --health-cmd "redis-cli ping"
           --health-interval 10s
