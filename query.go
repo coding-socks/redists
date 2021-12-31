@@ -29,7 +29,7 @@ type cmdRanger struct {
 	from        Timestamp
 	to          Timestamp
 	tsFilter    []time.Time
-	valueFilter *ValueFilter
+	valueFilter *valueFilter
 	count       *int64
 	align       *Timestamp
 	aggregation *Aggregation
@@ -52,7 +52,7 @@ func (c *cmdRanger) Args() []interface{} {
 		}
 	}
 	if c.valueFilter != nil {
-		args = append(args, optionNameFilterByValue, c.valueFilter.Min, c.valueFilter.Max)
+		args = append(args, optionNameFilterByValue, c.valueFilter.min, c.valueFilter.max)
 	}
 	if c.count != nil {
 		args = append(args, optionNameCount, *c.count)
@@ -102,7 +102,7 @@ func RangerWithTSFilter(tss ...time.Time) OptionRanger {
 
 func RangerWithValueFilter(min float64, max float64) OptionRanger {
 	return func(cmd *cmdRanger) {
-		cmd.valueFilter = &ValueFilter{Min: min, Max: max}
+		cmd.valueFilter = &valueFilter{min: min, max: max}
 	}
 }
 
@@ -165,7 +165,7 @@ type cmdMRanger struct {
 	to          Timestamp
 	filters     []Filter
 	tsFilter    []time.Time
-	valueFilter *ValueFilter
+	valueFilter *valueFilter
 	withLabels  []string
 	count       *int64
 	align       *Timestamp
@@ -190,7 +190,7 @@ func (c *cmdMRanger) Args() []interface{} {
 		}
 	}
 	if c.valueFilter != nil {
-		args = append(args, optionNameFilterByValue, c.valueFilter.Min, c.valueFilter.Max)
+		args = append(args, optionNameFilterByValue, c.valueFilter.min, c.valueFilter.max)
 	}
 	if c.withLabels != nil {
 		if len(c.withLabels) == 0 {
@@ -257,7 +257,7 @@ func MRangerWithTSFilter(tss ...time.Time) OptionMRanger {
 
 func MRangerWithValueFilter(min float64, max float64) OptionMRanger {
 	return func(cmd *cmdMRanger) {
-		cmd.valueFilter = &ValueFilter{Min: min, Max: max}
+		cmd.valueFilter = &valueFilter{min: min, max: max}
 	}
 }
 

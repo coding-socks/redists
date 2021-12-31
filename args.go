@@ -166,9 +166,9 @@ func FilterNotEqual(label string, values ...string) Filter {
 	return Filter{Label: label, Equal: false, Values: values}
 }
 
-type ValueFilter struct {
-	Min float64
-	Max float64
+type valueFilter struct {
+	min float64
+	max float64
 }
 
 // Timestamp can represent time.Time, `-`, `+`, and `*`.
