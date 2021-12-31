@@ -20,7 +20,7 @@ RedisTS was created during a coding spree which had the following focus:
 ## Get module
 
 ```
-go get github.com/RedisTimeSeries/redistimeseries-go
+go get -u github.com/nerg4l/redists
 ```
 
 ## Running tests
