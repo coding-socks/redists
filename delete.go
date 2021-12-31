@@ -5,21 +5,21 @@ import (
 	"time"
 )
 
-type CmdDel struct {
+type cmdDel struct {
 	key  string
 	from time.Time
 	to   time.Time
 }
 
-func newCmdDel(key string, from time.Time, to time.Time) *CmdDel {
-	return &CmdDel{key: key, from: from, to: to}
+func newCmdDel(key string, from time.Time, to time.Time) *cmdDel {
+	return &cmdDel{key: key, from: from, to: to}
 }
 
-func (c *CmdDel) Name() string {
+func (c *cmdDel) Name() string {
 	return "TS.DEL"
 }
 
-func (c *CmdDel) Args() []interface{} {
+func (c *cmdDel) Args() []interface{} {
 	return []interface{}{c.key, c.from.UnixMilli(), c.to.UnixMilli()}
 }
 

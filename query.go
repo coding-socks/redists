@@ -23,7 +23,7 @@ const (
 
 type nameRanger string
 
-type CmdRanger struct {
+type cmdRanger struct {
 	name        nameRanger
 	key         string
 	from        Timestamp
@@ -35,15 +35,15 @@ type CmdRanger struct {
 	aggregation *Aggregation
 }
 
-func newCmdRanger(name nameRanger, key string, from Timestamp, to Timestamp) *CmdRanger {
-	return &CmdRanger{name: name, key: key, from: from, to: to}
+func newCmdRanger(name nameRanger, key string, from Timestamp, to Timestamp) *cmdRanger {
+	return &cmdRanger{name: name, key: key, from: from, to: to}
 }
 
-func (c *CmdRanger) Name() string {
+func (c *cmdRanger) Name() string {
 	return string(c.name)
 }
 
-func (c *CmdRanger) Args() []interface{} {
+func (c *cmdRanger) Args() []interface{} {
 	args := []interface{}{c.key, c.from.Arg(), c.to.Arg()}
 	if len(c.tsFilter) > 0 {
 		args = append(args, optionNameFilterByTS)
@@ -66,7 +66,7 @@ func (c *CmdRanger) Args() []interface{} {
 	return args
 }
 
-type OptionRanger func(cmd *CmdRanger)
+type OptionRanger func(cmd *cmdRanger)
 
 // Range queries a range in forward direction.
 func (c *Client) Range(ctx context.Context, key string, from Timestamp, to Timestamp, options ...OptionRanger) ([]DataPoint, error) {
@@ -95,31 +95,31 @@ func (c *Client) ranger(ctx context.Context, name nameRanger, key string, from T
 }
 
 func RangerWithTSFilter(tss ...time.Time) OptionRanger {
-	return func(cmd *CmdRanger) {
+	return func(cmd *cmdRanger) {
 		cmd.tsFilter = tss
 	}
 }
 
 func RangerWithValueFilter(min float64, max float64) OptionRanger {
-	return func(cmd *CmdRanger) {
+	return func(cmd *cmdRanger) {
 		cmd.valueFilter = &ValueFilter{Min: min, Max: max}
 	}
 }
 
 func RangerWithCount(c int64) OptionRanger {
-	return func(cmd *CmdRanger) {
+	return func(cmd *cmdRanger) {
 		cmd.count = &c
 	}
 }
 
 func RangerWithAlign(a Timestamp) OptionRanger {
-	return func(cmd *CmdRanger) {
+	return func(cmd *cmdRanger) {
 		cmd.align = &a
 	}
 }
 
 func RangerWithAggregation(t AggregationType, timeBucket time.Duration) OptionRanger {
-	return func(cmd *CmdRanger) {
+	return func(cmd *cmdRanger) {
 		cmd.aggregation = &Aggregation{Type: t, TimeBucket: timeBucket}
 	}
 }
@@ -159,7 +159,7 @@ const (
 
 type nameMRanger string
 
-type CmdMRanger struct {
+type cmdMRanger struct {
 	name        nameMRanger
 	from        Timestamp
 	to          Timestamp
@@ -173,15 +173,15 @@ type CmdMRanger struct {
 	groupBy     *GroupBy
 }
 
-func newCmdMRanger(name nameMRanger, from Timestamp, to Timestamp, filters []Filter) *CmdMRanger {
-	return &CmdMRanger{name: name, from: from, to: to, filters: filters}
+func newCmdMRanger(name nameMRanger, from Timestamp, to Timestamp, filters []Filter) *cmdMRanger {
+	return &cmdMRanger{name: name, from: from, to: to, filters: filters}
 }
 
-func (c *CmdMRanger) Name() string {
+func (c *cmdMRanger) Name() string {
 	return string(c.name)
 }
 
-func (c *CmdMRanger) Args() []interface{} {
+func (c *cmdMRanger) Args() []interface{} {
 	args := []interface{}{c.from.Arg(), c.to.Arg()}
 	if len(c.tsFilter) > 0 {
 		args = append(args, optionNameFilterByTS)
@@ -221,7 +221,7 @@ func (c *CmdMRanger) Args() []interface{} {
 	return args
 }
 
-type OptionMRanger func(cmd *CmdMRanger)
+type OptionMRanger func(cmd *cmdMRanger)
 
 // MRange queries a range across multiple time-series by filters in forward direction.
 func (c *Client) MRange(ctx context.Context, from Timestamp, to Timestamp, filters []Filter, options ...OptionMRanger) ([]TimeSeries, error) {
@@ -250,19 +250,19 @@ func (c *Client) mRanger(ctx context.Context, name nameMRanger, from Timestamp, 
 }
 
 func MRangerWithTSFilter(tss ...time.Time) OptionMRanger {
-	return func(cmd *CmdMRanger) {
+	return func(cmd *cmdMRanger) {
 		cmd.tsFilter = tss
 	}
 }
 
 func MRangerWithValueFilter(min float64, max float64) OptionMRanger {
-	return func(cmd *CmdMRanger) {
+	return func(cmd *cmdMRanger) {
 		cmd.valueFilter = &ValueFilter{Min: min, Max: max}
 	}
 }
 
 func MRangerWithLabels(labels ...string) OptionMRanger {
-	return func(cmd *CmdMRanger) {
+	return func(cmd *cmdMRanger) {
 		if labels == nil {
 			cmd.withLabels = []string{}
 		} else {
@@ -272,25 +272,25 @@ func MRangerWithLabels(labels ...string) OptionMRanger {
 }
 
 func MRangerWithCount(c int64) OptionMRanger {
-	return func(cmd *CmdMRanger) {
+	return func(cmd *cmdMRanger) {
 		cmd.count = &c
 	}
 }
 
 func MRangerWithAlign(a Timestamp) OptionMRanger {
-	return func(cmd *CmdMRanger) {
+	return func(cmd *cmdMRanger) {
 		cmd.align = &a
 	}
 }
 
 func MRangerWithAggregation(t AggregationType, timeBucket time.Duration) OptionMRanger {
-	return func(cmd *CmdMRanger) {
+	return func(cmd *cmdMRanger) {
 		cmd.aggregation = &Aggregation{Type: t, TimeBucket: timeBucket}
 	}
 }
 
 func MRangerWithGroupBy(label string, reducer ReducerType) OptionMRanger {
-	return func(cmd *CmdMRanger) {
+	return func(cmd *cmdMRanger) {
 		cmd.groupBy = &GroupBy{Label: label, Reducer: reducer}
 	}
 }
@@ -316,19 +316,19 @@ func parseLastDatapoint(is []interface{}) LastDatapoint {
 	}
 }
 
-type CmdGet struct {
+type cmdGet struct {
 	key string
 }
 
-func newCmdGet(key string) *CmdGet {
-	return &CmdGet{key: key}
+func newCmdGet(key string) *cmdGet {
+	return &cmdGet{key: key}
 }
 
-func (c *CmdGet) Name() string {
+func (c *cmdGet) Name() string {
 	return "TS.GET"
 }
 
-func (c *CmdGet) Args() []interface{} {
+func (c *cmdGet) Args() []interface{} {
 	return []interface{}{c.key}
 }
 
@@ -342,20 +342,20 @@ func (c *Client) Get(ctx context.Context, key string) (DataPoint, error) {
 	return parseDataPoint(res.([]interface{})), nil
 }
 
-type CmdMGet struct {
+type cmdMGet struct {
 	filters    []Filter
 	withLabels []string
 }
 
-func newCmdMGet(filters []Filter) *CmdMGet {
-	return &CmdMGet{filters: filters}
+func newCmdMGet(filters []Filter) *cmdMGet {
+	return &cmdMGet{filters: filters}
 }
 
-func (c *CmdMGet) Name() string {
+func (c *cmdMGet) Name() string {
 	return "TS.MGET"
 }
 
-func (c *CmdMGet) Args() []interface{} {
+func (c *cmdMGet) Args() []interface{} {
 	var args []interface{}
 	if c.withLabels != nil {
 		if len(c.withLabels) == 0 {
@@ -374,7 +374,7 @@ func (c *CmdMGet) Args() []interface{} {
 	return args
 }
 
-type OptionMGet func(cmd *CmdMGet)
+type OptionMGet func(cmd *cmdMGet)
 
 // MGet gets the last samples matching the specific filter.
 func (c *Client) MGet(ctx context.Context, filters []Filter, options ...OptionMGet) ([]LastDatapoint, error) {
@@ -394,7 +394,7 @@ func (c *Client) MGet(ctx context.Context, filters []Filter, options ...OptionMG
 }
 
 func MGetWithLabels(labels ...string) OptionMGet {
-	return func(cmd *CmdMGet) {
+	return func(cmd *cmdMGet) {
 		if labels == nil {
 			cmd.withLabels = []string{}
 		} else {

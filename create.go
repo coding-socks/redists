@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-type CmdCreate struct {
+type cmdCreate struct {
 	key             string
 	retention       *time.Duration
 	encoding        *Encoding
@@ -14,15 +14,15 @@ type CmdCreate struct {
 	labels          map[string]string
 }
 
-func newCmdCreate(key string) *CmdCreate {
-	return &CmdCreate{key: key}
+func newCmdCreate(key string) *cmdCreate {
+	return &cmdCreate{key: key}
 }
 
-func (c *CmdCreate) Name() string {
+func (c *cmdCreate) Name() string {
 	return "TS.CREATE"
 }
 
-func (c *CmdCreate) Args() []interface{} {
+func (c *cmdCreate) Args() []interface{} {
 	args := []interface{}{c.key}
 	if c.retention != nil {
 		args = append(args, optionNameRetention, c.retention.Milliseconds())
@@ -43,7 +43,7 @@ func (c *CmdCreate) Args() []interface{} {
 	return args
 }
 
-type OptionCreate func(cmd *CmdCreate)
+type OptionCreate func(cmd *cmdCreate)
 
 // Create creates a new time-series.
 func (c *Client) Create(ctx context.Context, key string, options ...OptionCreate) error {
@@ -56,31 +56,31 @@ func (c *Client) Create(ctx context.Context, key string, options ...OptionCreate
 }
 
 func CreateWithRetention(r time.Duration) OptionCreate {
-	return func(cmd *CmdCreate) {
+	return func(cmd *cmdCreate) {
 		cmd.retention = &r
 	}
 }
 
 func CreateWithEncoding(e Encoding) OptionCreate {
-	return func(cmd *CmdCreate) {
+	return func(cmd *cmdCreate) {
 		cmd.encoding = &e
 	}
 }
 
 func CreateWithChunkSize(cs int) OptionCreate {
-	return func(cmd *CmdCreate) {
+	return func(cmd *cmdCreate) {
 		cmd.chunkSize = &cs
 	}
 }
 
 func CreateWithDuplicatePolicy(dp DuplicatePolicy) OptionCreate {
-	return func(cmd *CmdCreate) {
+	return func(cmd *cmdCreate) {
 		cmd.duplicatePolicy = &dp
 	}
 }
 
 func CreateWithLabels(labels ...Label) OptionCreate {
-	return func(cmd *CmdCreate) {
+	return func(cmd *cmdCreate) {
 		cmd.labels = map[string]string{}
 		for _, l := range labels {
 			cmd.labels[l.Name] = l.Value

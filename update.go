@@ -6,21 +6,21 @@ import (
 	"time"
 )
 
-type CmdAlter struct {
+type cmdAlter struct {
 	key       string
 	retention *time.Duration
 	labels    map[string]string
 }
 
-func newCmdAlter(key string) *CmdAlter {
-	return &CmdAlter{key: key}
+func newCmdAlter(key string) *cmdAlter {
+	return &cmdAlter{key: key}
 }
 
-func (c *CmdAlter) Name() string {
+func (c *cmdAlter) Name() string {
 	return "TS.ALTER"
 }
 
-func (c *CmdAlter) Args() []interface{} {
+func (c *cmdAlter) Args() []interface{} {
 	args := []interface{}{c.key}
 	if c.retention != nil {
 		args = append(args, optionNameRetention, c.retention.Milliseconds())
@@ -32,7 +32,7 @@ func (c *CmdAlter) Args() []interface{} {
 	return args
 }
 
-type OptionAlter func(cmd *CmdAlter)
+type OptionAlter func(cmd *cmdAlter)
 
 // Alter updates the retention, labels of an existing key.
 func (c *Client) Alter(ctx context.Context, key string, options ...OptionAlter) error {
@@ -45,13 +45,13 @@ func (c *Client) Alter(ctx context.Context, key string, options ...OptionAlter) 
 }
 
 func AlterWithRetention(r time.Duration) OptionAlter {
-	return func(cmd *CmdAlter) {
+	return func(cmd *cmdAlter) {
 		cmd.retention = &r
 	}
 }
 
 func AlterWithLabels(labels ...Label) OptionAlter {
-	return func(cmd *CmdAlter) {
+	return func(cmd *cmdAlter) {
 		cmd.labels = map[string]string{}
 		for _, l := range labels {
 			cmd.labels[l.Name] = l.Value
@@ -59,7 +59,7 @@ func AlterWithLabels(labels ...Label) OptionAlter {
 	}
 }
 
-type CmdAdd struct {
+type cmdAdd struct {
 	sample          Sample
 	retention       *time.Duration
 	encoding        *Encoding
@@ -68,15 +68,15 @@ type CmdAdd struct {
 	labels          map[string]string
 }
 
-func newCmdAdd(s Sample) *CmdAdd {
-	return &CmdAdd{sample: s}
+func newCmdAdd(s Sample) *cmdAdd {
+	return &cmdAdd{sample: s}
 }
 
-func (c *CmdAdd) Name() string {
+func (c *cmdAdd) Name() string {
 	return "TS.ADD"
 }
 
-func (c *CmdAdd) Args() []interface{} {
+func (c *cmdAdd) Args() []interface{} {
 	args := []interface{}{c.sample.Key, c.sample.Timestamp.Arg(), c.sample.Value}
 	if c.retention != nil {
 		args = append(args, optionNameRetention, c.retention.Milliseconds())
@@ -97,7 +97,7 @@ func (c *CmdAdd) Args() []interface{} {
 	return args
 }
 
-type OptionAdd func(cmd *CmdAdd)
+type OptionAdd func(cmd *cmdAdd)
 
 // Add updates the retention, labels of an existing key.
 func (c *Client) Add(ctx context.Context, s Sample, options ...OptionAdd) (time.Time, error) {
@@ -113,31 +113,31 @@ func (c *Client) Add(ctx context.Context, s Sample, options ...OptionAdd) (time.
 }
 
 func AddWithRetention(r time.Duration) OptionAdd {
-	return func(cmd *CmdAdd) {
+	return func(cmd *cmdAdd) {
 		cmd.retention = &r
 	}
 }
 
 func AddWithEncoding(e Encoding) OptionAdd {
-	return func(cmd *CmdAdd) {
+	return func(cmd *cmdAdd) {
 		cmd.encoding = &e
 	}
 }
 
 func AddWithChunkSize(cs int) OptionAdd {
-	return func(cmd *CmdAdd) {
+	return func(cmd *cmdAdd) {
 		cmd.chunkSize = &cs
 	}
 }
 
 func AddWithOnDuplicate(dp DuplicatePolicy) OptionAdd {
-	return func(cmd *CmdAdd) {
+	return func(cmd *cmdAdd) {
 		cmd.duplicatePolicy = &dp
 	}
 }
 
 func AddWithLabels(labels ...Label) OptionAdd {
-	return func(cmd *CmdAdd) {
+	return func(cmd *cmdAdd) {
 		cmd.labels = map[string]string{}
 		for _, l := range labels {
 			cmd.labels[l.Name] = l.Value
@@ -145,19 +145,19 @@ func AddWithLabels(labels ...Label) OptionAdd {
 	}
 }
 
-type CmdMAdd struct {
+type cmdMAdd struct {
 	samples []Sample
 }
 
-func newCmdMAdd(s []Sample) *CmdMAdd {
-	return &CmdMAdd{samples: s}
+func newCmdMAdd(s []Sample) *cmdMAdd {
+	return &cmdMAdd{samples: s}
 }
 
-func (c *CmdMAdd) Name() string {
+func (c *cmdMAdd) Name() string {
 	return "TS.MADD"
 }
 
-func (c *CmdMAdd) Args() []interface{} {
+func (c *cmdMAdd) Args() []interface{} {
 	var args []interface{}
 	for _, s := range c.samples {
 		args = append(args, s.Key, s.Timestamp.Arg(), s.Value)
@@ -209,7 +209,7 @@ const (
 
 type nameCounter string
 
-type CmdCounter struct {
+type cmdCounter struct {
 	name      nameCounter
 	key       string
 	value     float64
@@ -220,15 +220,15 @@ type CmdCounter struct {
 	labels    map[string]string
 }
 
-func newCmdCounter(name nameCounter, key string, value float64) *CmdCounter {
-	return &CmdCounter{name: name, key: key, value: value}
+func newCmdCounter(name nameCounter, key string, value float64) *cmdCounter {
+	return &cmdCounter{name: name, key: key, value: value}
 }
 
-func (c *CmdCounter) Name() string {
+func (c *cmdCounter) Name() string {
 	return string(c.name)
 }
 
-func (c *CmdCounter) Args() []interface{} {
+func (c *cmdCounter) Args() []interface{} {
 	args := []interface{}{c.key, c.value}
 	if c.timestamp != nil {
 		args = append(args, optionNameTimestamp, c.timestamp.UnixMilli())
@@ -249,7 +249,7 @@ func (c *CmdCounter) Args() []interface{} {
 	return args
 }
 
-type OptionCounter func(cmd *CmdCounter)
+type OptionCounter func(cmd *cmdCounter)
 
 // IncrBy creates a new sample that increments the latest sample's value.
 func (c *Client) IncrBy(ctx context.Context, key string, value float64, options ...OptionCounter) (time.Time, error) {
@@ -274,31 +274,31 @@ func (c *Client) counter(ctx context.Context, name nameCounter, key string, valu
 }
 
 func CounterWithRetention(r time.Duration) OptionCounter {
-	return func(cmd *CmdCounter) {
+	return func(cmd *cmdCounter) {
 		cmd.retention = &r
 	}
 }
 
 func CounterWithTimestamp(t time.Time) OptionCounter {
-	return func(cmd *CmdCounter) {
+	return func(cmd *cmdCounter) {
 		cmd.timestamp = &t
 	}
 }
 
 func CounterWithEncoding(e Encoding) OptionCounter {
-	return func(cmd *CmdCounter) {
+	return func(cmd *cmdCounter) {
 		cmd.encoding = &e
 	}
 }
 
 func CounterWithChunkSize(cs int) OptionCounter {
-	return func(cmd *CmdCounter) {
+	return func(cmd *cmdCounter) {
 		cmd.chunkSize = &cs
 	}
 }
 
 func CounterWithLabels(labels ...Label) OptionCounter {
-	return func(cmd *CmdCounter) {
+	return func(cmd *cmdCounter) {
 		cmd.labels = map[string]string{}
 		for _, l := range labels {
 			cmd.labels[l.Name] = l.Value

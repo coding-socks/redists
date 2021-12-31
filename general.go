@@ -134,20 +134,20 @@ func parseString(val interface{}) string {
 	}
 }
 
-type CmdInfo struct {
+type cmdInfo struct {
 	key   string
 	debug bool
 }
 
-func newCmdInfo(key string) *CmdInfo {
-	return &CmdInfo{key: key}
+func newCmdInfo(key string) *cmdInfo {
+	return &cmdInfo{key: key}
 }
 
-func (c *CmdInfo) Name() string {
+func (c *cmdInfo) Name() string {
 	return "TS.INFO"
 }
 
-func (c *CmdInfo) Args() []interface{} {
+func (c *cmdInfo) Args() []interface{} {
 	args := []interface{}{c.key}
 	if c.debug {
 		args = append(args, optionNameDebug)
@@ -155,7 +155,7 @@ func (c *CmdInfo) Args() []interface{} {
 	return args
 }
 
-type OptionInfo func(cmd *CmdInfo)
+type OptionInfo func(cmd *cmdInfo)
 
 // Info returns information and statistics on the time-series.
 func (c *Client) Info(ctx context.Context, key string, options ...OptionInfo) (Info, error) {
@@ -172,24 +172,24 @@ func (c *Client) Info(ctx context.Context, key string, options ...OptionInfo) (I
 }
 
 func InfoWithDebug() OptionInfo {
-	return func(cmd *CmdInfo) {
+	return func(cmd *cmdInfo) {
 		cmd.debug = true
 	}
 }
 
-type CmdQueryIndex struct {
+type cmdQueryIndex struct {
 	filters []Filter
 }
 
-func newCmdQueryIndex(filters []Filter) *CmdQueryIndex {
-	return &CmdQueryIndex{filters: filters}
+func newCmdQueryIndex(filters []Filter) *cmdQueryIndex {
+	return &cmdQueryIndex{filters: filters}
 }
 
-func (c *CmdQueryIndex) Name() string {
+func (c *cmdQueryIndex) Name() string {
 	return "TS.QUERYINDEX"
 }
 
-func (c *CmdQueryIndex) Args() []interface{} {
+func (c *cmdQueryIndex) Args() []interface{} {
 	args := []interface{}{}
 	for _, f := range c.filters {
 		args = append(args, f.Arg())
