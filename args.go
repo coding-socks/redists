@@ -101,16 +101,15 @@ type Aggregation struct {
 	TimeBucket time.Duration
 }
 
-type Label struct {
-	Name, Value string
-}
+type Labels map[string]string
 
-func NewLabel(name, value string) Label {
-	return Label{Name: name, Value: value}
-}
-
-func parseLabel(is []interface{}) Label {
-	return Label{Name: parseString(is[0]), Value: parseString(is[1])}
+func parseLabels(is []interface{}) Labels {
+	ls := make(Labels, len(is))
+	for i := range is {
+		v := is[i].([]interface{})
+		ls[parseString(v[0])] = parseString(v[1])
+	}
+	return ls
 }
 
 func encodeLabels(ls map[string]string) []interface{} {

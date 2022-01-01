@@ -48,7 +48,7 @@ func TestClient_Info(t *testing.T) {
 			tsclient := NewClient(doer)
 			err = tsclient.Create(ctx, key,
 				CreateWithRetention(time.Hour),
-				CreateWithLabels(NewLabel("l", "v")),
+				CreateWithLabels(Labels{"l": "v"}),
 			)
 			if err != nil {
 				t.Fatalf("Create() error = %v", err)
@@ -66,7 +66,7 @@ func TestClient_Info(t *testing.T) {
 			if got, want := inf.FirstTimestamp, secondMillennium; got != want {
 				t.Errorf("Info().FirstTimestamp got = %v, want %v", got, want)
 			}
-			if got, want := inf.Labels, []Label{{Name: "l", Value: "v"}}; !reflect.DeepEqual(got, want) {
+			if got, want := inf.Labels, (Labels{"l": "v"}); !reflect.DeepEqual(got, want) {
 				t.Errorf("Info().Labels got = %v, want %v", got, want)
 			}
 			inf, err = tsclient.Info(ctx, key, InfoWithDebug())
@@ -112,7 +112,7 @@ func TestClient_QueryIndex(t *testing.T) {
 			defer doer.Do(context.Background(), "DEL", key)
 
 			tsclient := NewClient(doer)
-			if err := tsclient.Create(ctx, key, CreateWithLabels(NewLabel("l", "v"))); err != nil {
+			if err := tsclient.Create(ctx, key, CreateWithLabels(Labels{"l": "v"})); err != nil {
 				t.Fatalf("Create() error = %v", err)
 			}
 			idxs, err := tsclient.QueryIndex(ctx, []Filter{FilterEqual("l", "v")})

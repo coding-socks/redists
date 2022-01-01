@@ -50,12 +50,9 @@ func AlterWithRetention(r time.Duration) OptionAlter {
 	}
 }
 
-func AlterWithLabels(labels ...Label) OptionAlter {
+func AlterWithLabels(ls Labels) OptionAlter {
 	return func(cmd *cmdAlter) {
-		cmd.labels = map[string]string{}
-		for _, l := range labels {
-			cmd.labels[l.Name] = l.Value
-		}
+		cmd.labels = ls
 	}
 }
 
@@ -136,12 +133,9 @@ func AddWithOnDuplicate(dp DuplicatePolicy) OptionAdd {
 	}
 }
 
-func AddWithLabels(labels ...Label) OptionAdd {
+func AddWithLabels(ls Labels) OptionAdd {
 	return func(cmd *cmdAdd) {
-		cmd.labels = map[string]string{}
-		for _, l := range labels {
-			cmd.labels[l.Name] = l.Value
-		}
+		cmd.labels = ls
 	}
 }
 
@@ -297,11 +291,8 @@ func CounterWithChunkSize(cs int) OptionCounter {
 	}
 }
 
-func CounterWithLabels(labels ...Label) OptionCounter {
+func CounterWithLabels(ls Labels) OptionCounter {
 	return func(cmd *cmdCounter) {
-		cmd.labels = map[string]string{}
-		for _, l := range labels {
-			cmd.labels[l.Name] = l.Value
-		}
+		cmd.labels = ls
 	}
 }

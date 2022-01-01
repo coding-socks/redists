@@ -313,7 +313,7 @@ func TestClient_MRange(t *testing.T) {
 			defer doer.Do(context.Background(), "DEL", key)
 
 			tsclient := NewClient(doer)
-			if err = tsclient.Create(ctx, key, CreateWithLabels(NewLabel("l", "v"))); err != nil {
+			if err = tsclient.Create(ctx, key, CreateWithLabels(Labels{"l": "v"})); err != nil {
 				t.Fatalf("Create() error = %v", err)
 			}
 			_, err = tsclient.MAdd(ctx, []Sample{
@@ -332,7 +332,7 @@ func TestClient_MRange(t *testing.T) {
 			want := []TimeSeries{
 				{
 					Key:    key,
-					Labels: []Label{{Name: "l", Value: "v"}},
+					Labels: Labels{"l": "v"},
 					DataPoints: []DataPoint{
 						{secondMillennium, 1.0},
 						{thirdMillennium, 2.0},
@@ -389,8 +389,7 @@ func TestClient_Get(t *testing.T) {
 			if err != nil {
 				t.Errorf("Range() error = %v", err)
 			}
-			want := DataPoint{thirdMillennium, 2.0}
-			if got := points; !reflect.DeepEqual(got, want) {
+			if got, want := points, (DataPoint{thirdMillennium, 2.0}); !reflect.DeepEqual(got, want) {
 				t.Errorf("Range() got = %v, want %v", got, want)
 			}
 		})
@@ -450,7 +449,7 @@ func TestClient_MGet(t *testing.T) {
 			defer doer.Do(context.Background(), "DEL", key)
 
 			tsclient := NewClient(doer)
-			if err = tsclient.Create(ctx, key, CreateWithLabels(NewLabel("l", "v"))); err != nil {
+			if err = tsclient.Create(ctx, key, CreateWithLabels(Labels{"l": "v"})); err != nil {
 				t.Fatalf("Create() error = %v", err)
 			}
 			_, err = tsclient.MAdd(ctx, []Sample{
@@ -469,7 +468,7 @@ func TestClient_MGet(t *testing.T) {
 			want := []LastDatapoint{
 				{
 					Key:       key,
-					Labels:    []Label{{Name: "l", Value: "v"}},
+					Labels:    Labels{"l": "v"},
 					DataPoint: DataPoint{thirdMillennium, 2.0},
 				},
 			}

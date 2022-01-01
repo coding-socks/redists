@@ -117,8 +117,7 @@ func TestClient_DeleteRule(t *testing.T) {
 			if err != nil {
 				t.Fatalf("Info() error = %v", err)
 			}
-			want = nil
-			if got, want := inf.Rules, want; !reflect.DeepEqual(got, want) {
+			if got, want := inf.Rules, []Rule(nil); !reflect.DeepEqual(got, want) {
 				t.Errorf("Info().Rules got = %v, want %v", got, want)
 			}
 		})

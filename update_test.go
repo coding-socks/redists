@@ -27,10 +27,10 @@ func TestCmdAlter(t *testing.T) {
 	})
 	t.Run("label", func(t *testing.T) {
 		cmd := newCmdAlter("key:any")
-		AlterWithLabels(
-			NewLabel("label:any", "value:any"),
-			NewLabel("label:other", "value:other"),
-		)(cmd)
+		AlterWithLabels(Labels{
+			"label:any":   "value:any",
+			"label:other": "value:other",
+		})(cmd)
 		if got, want := cmd.Args(), []interface{}{"key:any", "LABELS", "label:any", "value:any", "label:other", "value:other"}; !reflect.DeepEqual(got, want) {
 			t.Errorf("Args() = %v, want %v", got, want)
 		}
@@ -43,12 +43,12 @@ func TestCmdAlter(t *testing.T) {
 			"LABELS", "label:any", "value:any",
 		}
 		AlterWithRetention(time.Second)(cmd)
-		AlterWithLabels(NewLabel("label:any", "value:any"))(cmd)
+		AlterWithLabels(Labels{"label:any": "value:any"})(cmd)
 		if got := cmd.Args(); !reflect.DeepEqual(got, want) {
 			t.Errorf("Args() = %v, want %v", got, want)
 		}
 		cmd = newCmdAlter("key:any")
-		AlterWithLabels(NewLabel("label:any", "value:any"))(cmd)
+		AlterWithLabels(Labels{"label:any": "value:any"})(cmd)
 		AlterWithRetention(time.Second)(cmd)
 		if got := cmd.Args(); !reflect.DeepEqual(got, want) {
 			t.Errorf("Args() = %v, want %v", got, want)
@@ -77,14 +77,14 @@ func TestClient_Alter(t *testing.T) {
 			tsclient := NewClient(doer)
 			err = tsclient.Create(ctx, key,
 				CreateWithRetention(time.Hour),
-				CreateWithLabels(NewLabel("l", "v")),
+				CreateWithLabels(Labels{"l": "v"}),
 			)
 			if err != nil {
 				t.Fatalf("Create() error = %v", err)
 			}
 			err = tsclient.Alter(ctx, key,
 				AlterWithRetention(time.Minute),
-				AlterWithLabels(NewLabel("ll", "vv")),
+				AlterWithLabels(Labels{"ll": "vv"}),
 			)
 			if err != nil {
 				t.Fatalf("Alter() error = %v", err)
@@ -96,7 +96,7 @@ func TestClient_Alter(t *testing.T) {
 			if got, want := inf.RetentionTime, time.Minute; got != want {
 				t.Errorf("Info().RetentionTime got = %v, want %v", got, want)
 			}
-			if got, want := inf.Labels, []Label{{Name: "ll", Value: "vv"}}; !reflect.DeepEqual(got, want) {
+			if got, want := inf.Labels, (Labels{"ll": "vv"}); !reflect.DeepEqual(got, want) {
 				t.Errorf("Info().Labels got = %v, want %v", got, want)
 			}
 		})
@@ -143,10 +143,10 @@ func TestCmdAdd(t *testing.T) {
 	})
 	t.Run("labels", func(t *testing.T) {
 		cmd := newCmdAdd(NewSample("key:any", time.UnixMilli(1001), 0.5))
-		AddWithLabels(
-			NewLabel("label:any", "value:any"),
-			NewLabel("label:other", "value:other"),
-		)(cmd)
+		AddWithLabels(Labels{
+			"label:any":   "value:any",
+			"label:other": "value:other",
+		})(cmd)
 		if got, want := cmd.Args(), []interface{}{"key:any", int64(1001), 0.5, "LABELS", "label:any", "value:any", "label:other", "value:other"}; !reflect.DeepEqual(got, want) {
 			t.Errorf("Args() = %v, want %v", got, want)
 		}
@@ -165,12 +165,12 @@ func TestCmdAdd(t *testing.T) {
 		AddWithEncoding(EncodingCompressed)(cmd)
 		AddWithChunkSize(8)(cmd)
 		AddWithOnDuplicate(DuplicatePolicyBlock)(cmd)
-		AddWithLabels(NewLabel("label:any", "value:any"))(cmd)
+		AddWithLabels(Labels{"label:any": "value:any"})(cmd)
 		if got := cmd.Args(); !reflect.DeepEqual(got, want) {
 			t.Errorf("Args() = %v, want %v", got, want)
 		}
 		cmd = newCmdAdd(NewSample("key:any", time.UnixMilli(1001), 0.5))
-		AddWithLabels(NewLabel("label:any", "value:any"))(cmd)
+		AddWithLabels(Labels{"label:any": "value:any"})(cmd)
 		AddWithOnDuplicate(DuplicatePolicyBlock)(cmd)
 		AddWithChunkSize(8)(cmd)
 		AddWithEncoding(EncodingCompressed)(cmd)
@@ -276,21 +276,19 @@ func TestClient_MAdd(t *testing.T) {
 			if got, want := len(got), 3; got != want {
 				t.Fatalf("len(MAdd()) got = %v, want %v", got, want)
 			}
-			want := MultiResult{t: secondMillennium}
 			if err, wantErr := got[0].Err(), false; (err != nil) != wantErr {
 				t.Errorf("MAdd()[0] error = %v, wantErr = %v", err, wantErr)
 			}
-			if got := got[0]; got != want {
+			if got, want := got[0], (MultiResult{t: secondMillennium}); got != want {
 				t.Errorf("MAdd()[0] got = %v, want %v", got, want)
 			}
 			if err, wantErr := got[1].Err(), true; (err != nil) != wantErr {
 				t.Errorf("MAdd()[1] error = %v, wantErr = %v", err, wantErr)
 			}
-			want = MultiResult{t: thirdMillennium}
 			if err, wantErr := got[2].Err(), false; (err != nil) != wantErr {
 				t.Errorf("MAdd()[2] error = %v, wantErr = %v", err, wantErr)
 			}
-			if got := got[2]; got != want {
+			if got, want := got[2], (MultiResult{t: thirdMillennium}); got != want {
 				t.Errorf("MAdd()[2] got = %v, want %v", got, want)
 			}
 		})
@@ -348,10 +346,10 @@ func TestCmdCounter(t *testing.T) {
 	})
 	t.Run("labels", func(t *testing.T) {
 		cmd := newCmdCounter(nameIncrBy, "key:any", 0.5)
-		CounterWithLabels(
-			NewLabel("label:any", "value:any"),
-			NewLabel("label:other", "value:other"),
-		)(cmd)
+		CounterWithLabels(Labels{
+			"label:any":   "value:any",
+			"label:other": "value:other",
+		})(cmd)
 		if got, want := cmd.Args(), []interface{}{"key:any", 0.5, "LABELS", "label:any", "value:any", "label:other", "value:other"}; !reflect.DeepEqual(got, want) {
 			t.Errorf("Args() = %v, want %v", got, want)
 		}
@@ -370,12 +368,12 @@ func TestCmdCounter(t *testing.T) {
 		CounterWithRetention(time.Second)(cmd)
 		CounterWithEncoding(EncodingUncompressed)(cmd)
 		CounterWithChunkSize(8)(cmd)
-		CounterWithLabels(NewLabel("label:any", "value:any"))(cmd)
+		CounterWithLabels(Labels{"label:any": "value:any"})(cmd)
 		if got := cmd.Args(); !reflect.DeepEqual(got, want) {
 			t.Errorf("Args() = %v, want %v", got, want)
 		}
 		cmd = newCmdCounter(nameIncrBy, "key:any", 0.5)
-		CounterWithLabels(NewLabel("label:any", "value:any"))(cmd)
+		CounterWithLabels(Labels{"label:any": "value:any"})(cmd)
 		CounterWithChunkSize(8)(cmd)
 		CounterWithEncoding(EncodingUncompressed)(cmd)
 		CounterWithRetention(time.Second)(cmd)

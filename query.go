@@ -126,17 +126,14 @@ func RangerWithAggregation(t AggregationType, timeBucket time.Duration) OptionRa
 
 type TimeSeries struct {
 	Key        string
-	Labels     []Label
+	Labels     Labels
 	DataPoints []DataPoint
 }
 
 func parseTimeSeries(is []interface{}) TimeSeries {
-	var ls []Label
+	var ls Labels
 	if ils, ok := is[1].([]interface{}); ok {
-		ls = make([]Label, len(ils))
-		for i := range ils {
-			ls[i] = parseLabel(ils[i].([]interface{}))
-		}
+		ls = parseLabels(ils)
 	}
 	var dps []DataPoint
 	if idps, ok := is[2].([]interface{}); ok {
@@ -297,17 +294,14 @@ func MRangerWithGroupBy(label string, reducer ReducerType) OptionMRanger {
 
 type LastDatapoint struct {
 	Key       string
-	Labels    []Label
+	Labels    Labels
 	DataPoint DataPoint
 }
 
 func parseLastDatapoint(is []interface{}) LastDatapoint {
-	var ls []Label
+	var ls Labels
 	if ils, ok := is[1].([]interface{}); ok {
-		ls = make([]Label, len(ils))
-		for i := range ils {
-			ls[i] = parseLabel(ils[i].([]interface{}))
-		}
+		ls = parseLabels(ils)
 	}
 	return LastDatapoint{
 		Key:       parseString(is[0]),

@@ -65,7 +65,7 @@ type Info struct {
 	ChunkSize       int64
 	ChunkType       Encoding
 	DuplicatePolicy *DuplicatePolicy
-	Labels          []Label
+	Labels          Labels
 	SourceKey       string
 	Rules           []Rule
 	Chunks          []ChunkInfo
@@ -104,9 +104,7 @@ func parseInfo(is []interface{}) Info {
 			policy := parseDuplicatePolicy(val)
 			inf.DuplicatePolicy = &policy
 		case "labels":
-			for _, v := range val.([]interface{}) {
-				inf.Labels = append(inf.Labels, parseLabel(v.([]interface{})))
-			}
+			inf.Labels = parseLabels(val.([]interface{}))
 		case "sourceKey":
 			inf.SourceKey = parseString(val)
 		case "rules":

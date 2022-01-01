@@ -79,11 +79,8 @@ func CreateWithDuplicatePolicy(dp DuplicatePolicy) OptionCreate {
 	}
 }
 
-func CreateWithLabels(labels ...Label) OptionCreate {
+func CreateWithLabels(ls Labels) OptionCreate {
 	return func(cmd *cmdCreate) {
-		cmd.labels = map[string]string{}
-		for _, l := range labels {
-			cmd.labels[l.Name] = l.Value
-		}
+		cmd.labels = ls
 	}
 }

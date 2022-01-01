@@ -46,10 +46,10 @@ func TestCmdCreate(t *testing.T) {
 	})
 	t.Run("labels", func(t *testing.T) {
 		cmd := newCmdCreate("key:any")
-		CreateWithLabels(
-			NewLabel("label:any", "value:any"),
-			NewLabel("label:other", "value:other"),
-		)(cmd)
+		CreateWithLabels(Labels{
+			"label:any":   "value:any",
+			"label:other": "value:other",
+		})(cmd)
 		if got, want := cmd.Args(), []interface{}{"key:any", "LABELS", "label:any", "value:any", "label:other", "value:other"}; !reflect.DeepEqual(got, want) {
 			t.Errorf("Args() = %v, want %v", got, want)
 		}
@@ -68,12 +68,12 @@ func TestCmdCreate(t *testing.T) {
 		CreateWithEncoding(EncodingCompressed)(cmd)
 		CreateWithChunkSize(8)(cmd)
 		CreateWithDuplicatePolicy(DuplicatePolicyBlock)(cmd)
-		CreateWithLabels(NewLabel("label:any", "value:any"))(cmd)
+		CreateWithLabels(Labels{"label:any": "value:any"})(cmd)
 		if got := cmd.Args(); !reflect.DeepEqual(got, want) {
 			t.Errorf("Args() = %v, want %v", got, want)
 		}
 		cmd = newCmdCreate("key:any")
-		CreateWithLabels(NewLabel("label:any", "value:any"))(cmd)
+		CreateWithLabels(Labels{"label:any": "value:any"})(cmd)
 		CreateWithDuplicatePolicy(DuplicatePolicyBlock)(cmd)
 		CreateWithChunkSize(8)(cmd)
 		CreateWithEncoding(EncodingCompressed)(cmd)
