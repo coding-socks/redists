@@ -119,6 +119,13 @@ func TestClient_Range(t *testing.T) {
 			if err = tsclient.Create(ctx, key); err != nil {
 				t.Fatalf("Create() error = %v", err)
 			}
+			points, err := tsclient.Range(ctx, key, TSMin(), TSMax(), RangerWithCount(2))
+			if err != nil {
+				t.Errorf("Range() error = %v", err)
+			}
+			if got, want := points, []DataPoint{}; !reflect.DeepEqual(got, want) {
+				t.Errorf("Range() got = %v, want %v", got, want)
+			}
 			_, err = tsclient.MAdd(ctx, []Sample{
 				NewSample(key, secondMillennium, 1),
 				NewSample(key, thirdMillennium, 2),
@@ -127,7 +134,7 @@ func TestClient_Range(t *testing.T) {
 			if err != nil {
 				t.Fatalf("MAdd() error = %v", err)
 			}
-			points, err := tsclient.Range(ctx, key, TSMin(), TSMax(), RangerWithCount(2))
+			points, err = tsclient.Range(ctx, key, TSMin(), TSMax(), RangerWithCount(2))
 			if err != nil {
 				t.Errorf("Range() error = %v", err)
 			}
@@ -316,13 +323,6 @@ func TestClient_MRange(t *testing.T) {
 			if err = tsclient.Create(ctx, key, CreateWithLabels(Labels{"l": "v"})); err != nil {
 				t.Fatalf("Create() error = %v", err)
 			}
-			_, err = tsclient.MAdd(ctx, []Sample{
-				NewSample(key, secondMillennium, 1),
-				NewSample(key, thirdMillennium, 2),
-			})
-			if err != nil {
-				t.Fatalf("MAdd() error = %v", err)
-			}
 			points, err := tsclient.MRange(ctx, TSMin(), TSMax(), []Filter{FilterEqual("l", "v")},
 				MRangerWithLabels(),
 			)
@@ -330,6 +330,29 @@ func TestClient_MRange(t *testing.T) {
 				t.Errorf("MRange() error = %v", err)
 			}
 			want := []TimeSeries{
+				{
+					Key:        key,
+					Labels:     Labels{"l": "v"},
+					DataPoints: []DataPoint{},
+				},
+			}
+			if got := points; !reflect.DeepEqual(got, want) {
+				t.Errorf("MRange() got = %v, want %v", got, want)
+			}
+			_, err = tsclient.MAdd(ctx, []Sample{
+				NewSample(key, secondMillennium, 1),
+				NewSample(key, thirdMillennium, 2),
+			})
+			if err != nil {
+				t.Fatalf("MAdd() error = %v", err)
+			}
+			points, err = tsclient.MRange(ctx, TSMin(), TSMax(), []Filter{FilterEqual("l", "v")},
+				MRangerWithLabels(),
+			)
+			if err != nil {
+				t.Errorf("MRange() error = %v", err)
+			}
+			want = []TimeSeries{
 				{
 					Key:    key,
 					Labels: Labels{"l": "v"},
@@ -378,6 +401,13 @@ func TestClient_Get(t *testing.T) {
 			if err = tsclient.Create(ctx, key); err != nil {
 				t.Fatalf("Create() error = %v", err)
 			}
+			points, err := tsclient.Get(ctx, key)
+			if err != nil {
+				t.Errorf("Range() error = %v", err)
+			}
+			if got, want := points, (*DataPoint)(nil); !reflect.DeepEqual(got, want) {
+				t.Errorf("Range() got = %v, want %v", got, want)
+			}
 			_, err = tsclient.MAdd(ctx, []Sample{
 				NewSample(key, secondMillennium, 1),
 				NewSample(key, thirdMillennium, 2),
@@ -385,11 +415,11 @@ func TestClient_Get(t *testing.T) {
 			if err != nil {
 				t.Fatalf("MAdd() error = %v", err)
 			}
-			points, err := tsclient.Get(ctx, key)
+			points, err = tsclient.Get(ctx, key)
 			if err != nil {
 				t.Errorf("Range() error = %v", err)
 			}
-			if got, want := points, (DataPoint{thirdMillennium, 2.0}); !reflect.DeepEqual(got, want) {
+			if got, want := points, (&DataPoint{thirdMillennium, 2.0}); !reflect.DeepEqual(got, want) {
 				t.Errorf("Range() got = %v, want %v", got, want)
 			}
 		})
@@ -452,13 +482,6 @@ func TestClient_MGet(t *testing.T) {
 			if err = tsclient.Create(ctx, key, CreateWithLabels(Labels{"l": "v"})); err != nil {
 				t.Fatalf("Create() error = %v", err)
 			}
-			_, err = tsclient.MAdd(ctx, []Sample{
-				NewSample(key, secondMillennium, 1),
-				NewSample(key, thirdMillennium, 2),
-			})
-			if err != nil {
-				t.Fatalf("MAdd() error = %v", err)
-			}
 			points, err := tsclient.MGet(ctx, []Filter{FilterEqual("l", "v")},
 				MGetWithLabels(),
 			)
@@ -469,7 +492,30 @@ func TestClient_MGet(t *testing.T) {
 				{
 					Key:       key,
 					Labels:    Labels{"l": "v"},
-					DataPoint: DataPoint{thirdMillennium, 2.0},
+					DataPoint: nil,
+				},
+			}
+			if got := points; !reflect.DeepEqual(got, want) {
+				t.Errorf("MRange() got = %v, want %v", got, want)
+			}
+			_, err = tsclient.MAdd(ctx, []Sample{
+				NewSample(key, secondMillennium, 1),
+				NewSample(key, thirdMillennium, 2),
+			})
+			if err != nil {
+				t.Fatalf("MAdd() error = %v", err)
+			}
+			points, err = tsclient.MGet(ctx, []Filter{FilterEqual("l", "v")},
+				MGetWithLabels(),
+			)
+			if err != nil {
+				t.Errorf("MRange() error = %v", err)
+			}
+			want = []LastDatapoint{
+				{
+					Key:       key,
+					Labels:    Labels{"l": "v"},
+					DataPoint: &DataPoint{thirdMillennium, 2.0},
 				},
 			}
 			if got := points; !reflect.DeepEqual(got, want) {

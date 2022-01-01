@@ -295,7 +295,7 @@ func MRangerWithGroupBy(label string, reducer ReducerType) OptionMRanger {
 type LastDatapoint struct {
 	Key       string
 	Labels    Labels
-	DataPoint DataPoint
+	DataPoint *DataPoint
 }
 
 func parseLastDatapoint(is []interface{}) LastDatapoint {
@@ -303,10 +303,15 @@ func parseLastDatapoint(is []interface{}) LastDatapoint {
 	if ils, ok := is[1].([]interface{}); ok {
 		ls = parseLabels(ils)
 	}
+	var point *DataPoint
+	if ils := is[2].([]interface{}); len(ils) > 0 {
+		p := parseDataPoint(ils)
+		point = &p
+	}
 	return LastDatapoint{
 		Key:       parseString(is[0]),
 		Labels:    ls,
-		DataPoint: parseDataPoint(is[2].([]interface{})),
+		DataPoint: point,
 	}
 }
 
@@ -327,13 +332,18 @@ func (c *cmdGet) Args() []interface{} {
 }
 
 // Get gets the last sample.
-func (c *Client) Get(ctx context.Context, key string) (DataPoint, error) {
+func (c *Client) Get(ctx context.Context, key string) (*DataPoint, error) {
 	cmd := newCmdGet(key)
 	res, err := c.d.Do(ctx, cmd.Name(), cmd.Args()...)
 	if err != nil {
-		return DataPoint{}, err
+		return nil, err
 	}
-	return parseDataPoint(res.([]interface{})), nil
+	is := res.([]interface{})
+	if len(is) == 0 {
+		return nil, nil
+	}
+	point := parseDataPoint(is)
+	return &point, nil
 }
 
 type cmdMGet struct {
