@@ -36,7 +36,7 @@ func (c *cmdCreate) Args() []interface{} {
 	if c.duplicatePolicy != nil {
 		args = append(args, optionNameDuplicatePolicy, string(*c.duplicatePolicy))
 	}
-	if len(c.labels) > 0 {
+	if c.labels != nil {
 		args = append(args, optionNameLabels)
 		args = append(args, encodeLabels(c.labels)...)
 	}

@@ -99,6 +99,22 @@ func TestClient_Alter(t *testing.T) {
 			if got, want := inf.Labels, (Labels{"ll": "vv"}); !reflect.DeepEqual(got, want) {
 				t.Errorf("Info().Labels got = %v, want %v", got, want)
 			}
+			err = tsclient.Alter(ctx, key,
+				AlterWithLabels(Labels{}),
+			)
+			if err != nil {
+				t.Fatalf("Alter() error = %v", err)
+			}
+			inf, err = tsclient.Info(ctx, key)
+			if err != nil {
+				t.Fatalf("Info() error = %v", err)
+			}
+			if got, want := inf.RetentionTime, time.Minute; got != want {
+				t.Errorf("Info().RetentionTime got = %v, want %v", got, want)
+			}
+			if got, want := inf.Labels, (Labels{}); !reflect.DeepEqual(got, want) {
+				t.Errorf("Info().Labels got = %v, want %v", got, want)
+			}
 		})
 	}
 }
