@@ -147,7 +147,7 @@ The following example shows how to create a Doer implementation with RedisPipe:
 
 Creating a client with Radix
 
-!IMPORTANT! `MAdd` will not return a list of results in case of Radix an issue was already opened: https://github.com/mediocregopher/radix/issues/305
+**!IMPORTANT!** `MAdd` will not return a list of results in case of an error when used with `github.com/mediocregopher/radix/v4`. An issue was already opened: https://github.com/mediocregopher/radix/issues/305
 
 The following example shows how to create a Doer implementation with Radix:
 
