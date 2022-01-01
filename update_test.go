@@ -105,7 +105,7 @@ func TestClient_Alter(t *testing.T) {
 
 func TestCmdAdd(t *testing.T) {
 	t.Run("basic", func(t *testing.T) {
-		cmd := newCmdAdd(NewSample("key:any", TS(time.UnixMilli(1001)), 0.5))
+		cmd := newCmdAdd(NewSample("key:any", time.UnixMilli(1001), 0.5))
 		if got, want := cmd.Name(), "TS.ADD"; got != want {
 			t.Errorf("Name() = %v, want %v", got, want)
 		}
@@ -114,35 +114,35 @@ func TestCmdAdd(t *testing.T) {
 		}
 	})
 	t.Run("retention", func(t *testing.T) {
-		cmd := newCmdAdd(NewSample("key:any", TS(time.UnixMilli(1001)), 0.5))
+		cmd := newCmdAdd(NewSample("key:any", time.UnixMilli(1001), 0.5))
 		AddWithRetention(time.Second)(cmd)
 		if got, want := cmd.Args(), []interface{}{"key:any", int64(1001), 0.5, "RETENTION", int64(1000)}; !reflect.DeepEqual(got, want) {
 			t.Errorf("Args() = %v, want %v", got, want)
 		}
 	})
 	t.Run("encoding", func(t *testing.T) {
-		cmd := newCmdAdd(NewSample("key:any", TS(time.UnixMilli(1001)), 0.5))
+		cmd := newCmdAdd(NewSample("key:any", time.UnixMilli(1001), 0.5))
 		AddWithEncoding(EncodingCompressed)(cmd)
 		if got, want := cmd.Args(), []interface{}{"key:any", int64(1001), 0.5, "ENCODING", "COMPRESSED"}; !reflect.DeepEqual(got, want) {
 			t.Errorf("Args() = %v, want %v", got, want)
 		}
 	})
 	t.Run("chunk size", func(t *testing.T) {
-		cmd := newCmdAdd(NewSample("key:any", TS(time.UnixMilli(1001)), 0.5))
+		cmd := newCmdAdd(NewSample("key:any", time.UnixMilli(1001), 0.5))
 		AddWithChunkSize(8)(cmd)
 		if got, want := cmd.Args(), []interface{}{"key:any", int64(1001), 0.5, "CHUNK_SIZE", 8}; !reflect.DeepEqual(got, want) {
 			t.Errorf("Args() = %v, want %v", got, want)
 		}
 	})
 	t.Run("duplicate policy", func(t *testing.T) {
-		cmd := newCmdAdd(NewSample("key:any", TS(time.UnixMilli(1001)), 0.5))
+		cmd := newCmdAdd(NewSample("key:any", time.UnixMilli(1001), 0.5))
 		AddWithOnDuplicate(DuplicatePolicyBlock)(cmd)
 		if got, want := cmd.Args(), []interface{}{"key:any", int64(1001), 0.5, "ON_DUPLICATE", "BLOCK"}; !reflect.DeepEqual(got, want) {
 			t.Errorf("Args() = %v, want %v", got, want)
 		}
 	})
 	t.Run("labels", func(t *testing.T) {
-		cmd := newCmdAdd(NewSample("key:any", TS(time.UnixMilli(1001)), 0.5))
+		cmd := newCmdAdd(NewSample("key:any", time.UnixMilli(1001), 0.5))
 		AddWithLabels(
 			NewLabel("label:any", "value:any"),
 			NewLabel("label:other", "value:other"),
@@ -152,7 +152,7 @@ func TestCmdAdd(t *testing.T) {
 		}
 	})
 	t.Run("args order", func(t *testing.T) {
-		cmd := newCmdAdd(NewSample("key:any", TS(time.UnixMilli(1001)), 0.5))
+		cmd := newCmdAdd(NewSample("key:any", time.UnixMilli(1001), 0.5))
 		want := []interface{}{
 			"key:any", int64(1001), 0.5,
 			"RETENTION", int64(1000),
@@ -169,7 +169,7 @@ func TestCmdAdd(t *testing.T) {
 		if got := cmd.Args(); !reflect.DeepEqual(got, want) {
 			t.Errorf("Args() = %v, want %v", got, want)
 		}
-		cmd = newCmdAdd(NewSample("key:any", TS(time.UnixMilli(1001)), 0.5))
+		cmd = newCmdAdd(NewSample("key:any", time.UnixMilli(1001), 0.5))
 		AddWithLabels(NewLabel("label:any", "value:any"))(cmd)
 		AddWithOnDuplicate(DuplicatePolicyBlock)(cmd)
 		AddWithChunkSize(8)(cmd)
@@ -200,7 +200,7 @@ func TestClient_Add(t *testing.T) {
 			defer doer.Do(context.Background(), "DEL", key)
 
 			tsclient := NewClient(doer)
-			got, err := tsclient.Add(ctx, NewSample(key, TS(secondMillennium), 1), AddWithRetention(time.Hour))
+			got, err := tsclient.Add(ctx, NewSample(key, secondMillennium, 1), AddWithRetention(time.Hour))
 			if err != nil {
 				t.Fatalf("Add() error = %v", err)
 			}
@@ -224,7 +224,7 @@ func TestClient_Add(t *testing.T) {
 func TestCmdMAdd(t *testing.T) {
 	t.Run("basic", func(t *testing.T) {
 		cmd := newCmdMAdd([]Sample{
-			NewSample("key:any", TS(time.UnixMilli(1001)), 0.5),
+			NewSample("key:any", time.UnixMilli(1001), 0.5),
 			NewSample("key:any", TSAuto(), 0.5),
 		})
 		if got, want := cmd.Name(), "TS.MADD"; got != want {
@@ -260,9 +260,9 @@ func TestClient_MAdd(t *testing.T) {
 				t.Fatalf("Create() error = %v", err)
 			}
 			got, err := tsclient.MAdd(ctx, []Sample{
-				NewSample(key, TS(secondMillennium), 1),
-				NewSample(unknownKey, TS(secondMillennium), 1),
-				NewSample(key, TS(thirdMillennium), 2),
+				NewSample(key, secondMillennium, 1),
+				NewSample(unknownKey, secondMillennium, 1),
+				NewSample(key, thirdMillennium, 2),
 			})
 			if tt.name == "radix" { // https://github.com/mediocregopher/radix/issues/305
 				if wantErr := true; (err != nil) != wantErr {

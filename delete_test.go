@@ -43,8 +43,8 @@ func TestClient_Del(t *testing.T) {
 				t.Fatalf("Create() error = %v", err)
 			}
 			_, err = tsclient.MAdd(ctx, []Sample{
-				NewSample(key, TS(secondMillennium), 1),
-				NewSample(key, TS(thirdMillennium), 2),
+				NewSample(key, secondMillennium, 1),
+				NewSample(key, thirdMillennium, 2),
 			})
 			if err != nil {
 				t.Fatalf("MAdd() error = %v", err)

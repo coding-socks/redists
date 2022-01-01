@@ -171,54 +171,69 @@ type valueFilter struct {
 	max float64
 }
 
-// Timestamp can represent time.Time, `-`, `+`, and `*`.
-type Timestamp struct {
+type Timestamp interface {
+	UnixMilli() int64
+}
+
+type TimestampMin interface {
+	Timestamp
+	Min() bool
+}
+
+type TimestampMax interface {
+	Timestamp
+	Max() bool
+}
+
+type TimestampAuto interface {
+	Timestamp
+	Auto() bool
+}
+
+// TS can represent time.Time, `-`, `+`, and `*`.
+type TS struct {
 	time.Time
 	min  bool
 	max  bool
 	auto bool
 }
 
-func (t Timestamp) Min() bool {
+func (t TS) Min() bool {
 	return t.min
 }
 
-func (t Timestamp) Max() bool {
+func (t TS) Max() bool {
 	return t.max
 }
 
-func (t Timestamp) Auto() bool {
+func (t TS) Auto() bool {
 	return t.auto
 }
 
-func (t Timestamp) Arg() interface{} {
-	if t.min {
+func timestampArg(ts Timestamp) interface{} {
+	if v, ok := ts.(TimestampMin); ok && v.Min() {
 		return "-"
 	}
-	if t.max {
+	if v, ok := ts.(TimestampMax); ok && v.Max() {
 		return "+"
 	}
-	if t.auto {
+	if v, ok := ts.(TimestampAuto); ok && v.Auto() {
 		return "*"
 	}
-	return t.Time.UnixMilli()
+	return ts.UnixMilli()
 }
 
-func TS(t time.Time) Timestamp {
-	return Timestamp{Time: t}
+// TSMin returns a TS which represents `-`.
+func TSMin() TS {
+	return TS{min: true}
 }
 
-// TSMin returns a Timestamp which represents `-`.
-func TSMin() Timestamp {
-	return Timestamp{min: true}
+// TSMax returns a TS which represents `+`.
+func TSMax() TS {
+	return TS{max: true}
 }
 
-// TSMax returns a Timestamp which represents `+`.
-func TSMax() Timestamp {
-	return Timestamp{max: true}
-}
-
-// TSAuto returns a Timestamp which represents `*`.
-func TSAuto() Timestamp {
-	return Timestamp{auto: true}
+// TSAuto returns a TS which represents `*`.
+func TSAuto() TS {
+	return TS{auto: true}
 }

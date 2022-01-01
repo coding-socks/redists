@@ -44,7 +44,7 @@ func (c *cmdRanger) Name() string {
 }
 
 func (c *cmdRanger) Args() []interface{} {
-	args := []interface{}{c.key, c.from.Arg(), c.to.Arg()}
+	args := []interface{}{c.key, timestampArg(c.from), timestampArg(c.to)}
 	if len(c.tsFilter) > 0 {
 		args = append(args, optionNameFilterByTS)
 		for i := range c.tsFilter {
@@ -58,7 +58,7 @@ func (c *cmdRanger) Args() []interface{} {
 		args = append(args, optionNameCount, *c.count)
 	}
 	if c.align != nil {
-		args = append(args, optionNameAlign, c.align.Arg())
+		args = append(args, optionNameAlign, timestampArg(*c.align))
 	}
 	if c.aggregation != nil {
 		args = append(args, optionNameAggregation, string(c.aggregation.Type), c.aggregation.TimeBucket.Milliseconds())
@@ -182,7 +182,7 @@ func (c *cmdMRanger) Name() string {
 }
 
 func (c *cmdMRanger) Args() []interface{} {
-	args := []interface{}{c.from.Arg(), c.to.Arg()}
+	args := []interface{}{timestampArg(c.from), timestampArg(c.to)}
 	if len(c.tsFilter) > 0 {
 		args = append(args, optionNameFilterByTS)
 		for i := range c.tsFilter {
@@ -206,7 +206,7 @@ func (c *cmdMRanger) Args() []interface{} {
 		args = append(args, optionNameCount, *c.count)
 	}
 	if c.align != nil {
-		args = append(args, optionNameAlign, c.align.Arg())
+		args = append(args, optionNameAlign, timestampArg(*c.align))
 	}
 	if c.aggregation != nil {
 		args = append(args, optionNameAggregation, string(c.aggregation.Type), c.aggregation.TimeBucket.Milliseconds())

@@ -15,7 +15,7 @@ var (
 
 func TestCmdRanger(t *testing.T) {
 	t.Run("range", func(t *testing.T) {
-		cmd := newCmdRanger(nameRange, "key:any", TS(secondMillennium), TS(thirdMillennium))
+		cmd := newCmdRanger(nameRange, "key:any", secondMillennium, thirdMillennium)
 		if got, want := cmd.Name(), "TS.RANGE"; got != want {
 			t.Errorf("Name() = %v, want %v", got, want)
 		}
@@ -24,7 +24,7 @@ func TestCmdRanger(t *testing.T) {
 		}
 	})
 	t.Run("rev range", func(t *testing.T) {
-		cmd := newCmdRanger(nameRevRange, "key:any", TS(secondMillennium), TS(thirdMillennium))
+		cmd := newCmdRanger(nameRevRange, "key:any", secondMillennium, thirdMillennium)
 		if got, want := cmd.Name(), "TS.REVRANGE"; got != want {
 			t.Errorf("Name() = %v, want %v", got, want)
 		}
@@ -33,42 +33,42 @@ func TestCmdRanger(t *testing.T) {
 		}
 	})
 	t.Run("filter by ts", func(t *testing.T) {
-		cmd := newCmdRanger(nameRange, "key:any", TS(secondMillennium), TS(thirdMillennium))
+		cmd := newCmdRanger(nameRange, "key:any", secondMillennium, thirdMillennium)
 		RangerWithTSFilter(time.Unix(1500000000, 0), time.Unix(1600000000, 0))(cmd)
 		if got, want := cmd.Args(), []interface{}{"key:any", secondMillennium.UnixMilli(), thirdMillennium.UnixMilli(), "FILTER_BY_TS", int64(1500000000000), int64(1600000000000)}; !reflect.DeepEqual(got, want) {
 			t.Errorf("Args() = %v, want %v", got, want)
 		}
 	})
 	t.Run("filter by value", func(t *testing.T) {
-		cmd := newCmdRanger(nameRange, "key:any", TS(secondMillennium), TS(thirdMillennium))
+		cmd := newCmdRanger(nameRange, "key:any", secondMillennium, thirdMillennium)
 		RangerWithValueFilter(0.2, 0.4)(cmd)
 		if got, want := cmd.Args(), []interface{}{"key:any", secondMillennium.UnixMilli(), thirdMillennium.UnixMilli(), "FILTER_BY_VALUE", 0.2, 0.4}; !reflect.DeepEqual(got, want) {
 			t.Errorf("Args() = %v, want %v", got, want)
 		}
 	})
 	t.Run("count", func(t *testing.T) {
-		cmd := newCmdRanger(nameRange, "key:any", TS(secondMillennium), TS(thirdMillennium))
+		cmd := newCmdRanger(nameRange, "key:any", secondMillennium, thirdMillennium)
 		RangerWithCount(100)(cmd)
 		if got, want := cmd.Args(), []interface{}{"key:any", secondMillennium.UnixMilli(), thirdMillennium.UnixMilli(), "COUNT", int64(100)}; !reflect.DeepEqual(got, want) {
 			t.Errorf("Args() = %v, want %v", got, want)
 		}
 	})
 	t.Run("align", func(t *testing.T) {
-		cmd := newCmdRanger(nameRange, "key:any", TS(secondMillennium), TS(thirdMillennium))
-		RangerWithAlign(TS(time.Unix(1500000000, 0)))(cmd)
+		cmd := newCmdRanger(nameRange, "key:any", secondMillennium, thirdMillennium)
+		RangerWithAlign(time.Unix(1500000000, 0))(cmd)
 		if got, want := cmd.Args(), []interface{}{"key:any", secondMillennium.UnixMilli(), thirdMillennium.UnixMilli(), "ALIGN", int64(1500000000000)}; !reflect.DeepEqual(got, want) {
 			t.Errorf("Args() = %v, want %v", got, want)
 		}
 	})
 	t.Run("aggregation", func(t *testing.T) {
-		cmd := newCmdRanger(nameRange, "key:any", TS(secondMillennium), TS(thirdMillennium))
+		cmd := newCmdRanger(nameRange, "key:any", secondMillennium, thirdMillennium)
 		RangerWithAggregation(AggregationTypeAvg, time.Second)(cmd)
 		if got, want := cmd.Args(), []interface{}{"key:any", secondMillennium.UnixMilli(), thirdMillennium.UnixMilli(), "AGGREGATION", "AVG", int64(1000)}; !reflect.DeepEqual(got, want) {
 			t.Errorf("Args() = %v, want %v", got, want)
 		}
 	})
 	t.Run("args order", func(t *testing.T) {
-		cmd := newCmdRanger(nameRange, "key:any", TS(secondMillennium), TS(thirdMillennium))
+		cmd := newCmdRanger(nameRange, "key:any", secondMillennium, thirdMillennium)
 		want := []interface{}{
 			"key:any", secondMillennium.UnixMilli(), thirdMillennium.UnixMilli(),
 			"FILTER_BY_TS", int64(1500000000000), int64(1600000000000),
@@ -80,14 +80,14 @@ func TestCmdRanger(t *testing.T) {
 		RangerWithTSFilter(time.Unix(1500000000, 0), time.Unix(1600000000, 0))(cmd)
 		RangerWithValueFilter(0.2, 0.4)(cmd)
 		RangerWithCount(100)(cmd)
-		RangerWithAlign(TS(time.Unix(1500000000, 0)))(cmd)
+		RangerWithAlign(time.Unix(1500000000, 0))(cmd)
 		RangerWithAggregation(AggregationTypeAvg, time.Second)(cmd)
 		if got := cmd.Args(); !reflect.DeepEqual(got, want) {
 			t.Errorf("Args() = %v, want %v", got, want)
 		}
-		cmd = newCmdRanger(nameRange, "key:any", TS(secondMillennium), TS(thirdMillennium))
+		cmd = newCmdRanger(nameRange, "key:any", secondMillennium, thirdMillennium)
 		RangerWithAggregation(AggregationTypeAvg, time.Second)(cmd)
-		RangerWithAlign(TS(time.Unix(1500000000, 0)))(cmd)
+		RangerWithAlign(time.Unix(1500000000, 0))(cmd)
 		RangerWithCount(100)(cmd)
 		RangerWithValueFilter(0.2, 0.4)(cmd)
 		RangerWithTSFilter(time.Unix(1500000000, 0), time.Unix(1600000000, 0))(cmd)
@@ -120,9 +120,9 @@ func TestClient_Range(t *testing.T) {
 				t.Fatalf("Create() error = %v", err)
 			}
 			_, err = tsclient.MAdd(ctx, []Sample{
-				NewSample(key, TS(secondMillennium), 1),
-				NewSample(key, TS(thirdMillennium), 2),
-				NewSample(key, TS(thirdMillennium.Add(time.Minute)), 3),
+				NewSample(key, secondMillennium, 1),
+				NewSample(key, thirdMillennium, 2),
+				NewSample(key, thirdMillennium.Add(time.Minute), 3),
 			})
 			if err != nil {
 				t.Fatalf("MAdd() error = %v", err)
@@ -144,7 +144,7 @@ func TestClient_Range(t *testing.T) {
 
 func TestCmdMRanger(t *testing.T) {
 	t.Run("range", func(t *testing.T) {
-		cmd := newCmdMRanger(nameMRange, TS(secondMillennium), TS(thirdMillennium), []Filter{FilterEqual("l", "v")})
+		cmd := newCmdMRanger(nameMRange, secondMillennium, thirdMillennium, []Filter{FilterEqual("l", "v")})
 		if got, want := cmd.Name(), "TS.MRANGE"; got != want {
 			t.Errorf("Name() = %v, want %v", got, want)
 		}
@@ -153,7 +153,7 @@ func TestCmdMRanger(t *testing.T) {
 		}
 	})
 	t.Run("rev range", func(t *testing.T) {
-		cmd := newCmdMRanger(nameMRevRange, TS(secondMillennium), TS(thirdMillennium), []Filter{FilterEqual("l", "v")})
+		cmd := newCmdMRanger(nameMRevRange, secondMillennium, thirdMillennium, []Filter{FilterEqual("l", "v")})
 		if got, want := cmd.Name(), "TS.MREVRANGE"; got != want {
 			t.Errorf("Name() = %v, want %v", got, want)
 		}
@@ -162,7 +162,7 @@ func TestCmdMRanger(t *testing.T) {
 		}
 	})
 	t.Run("filter by ts", func(t *testing.T) {
-		cmd := newCmdMRanger(nameMRange, TS(secondMillennium), TS(thirdMillennium), []Filter{FilterEqual("l", "v")})
+		cmd := newCmdMRanger(nameMRange, secondMillennium, thirdMillennium, []Filter{FilterEqual("l", "v")})
 		MRangerWithTSFilter(time.Unix(1500000000, 0), time.Unix(1600000000, 0))(cmd)
 		want := []interface{}{
 			secondMillennium.UnixMilli(), thirdMillennium.UnixMilli(),
@@ -174,7 +174,7 @@ func TestCmdMRanger(t *testing.T) {
 		}
 	})
 	t.Run("filter by value", func(t *testing.T) {
-		cmd := newCmdMRanger(nameMRange, TS(secondMillennium), TS(thirdMillennium), []Filter{FilterEqual("l", "v")})
+		cmd := newCmdMRanger(nameMRange, secondMillennium, thirdMillennium, []Filter{FilterEqual("l", "v")})
 		MRangerWithValueFilter(0.2, 0.4)(cmd)
 		want := []interface{}{
 			secondMillennium.UnixMilli(), thirdMillennium.UnixMilli(),
@@ -186,7 +186,7 @@ func TestCmdMRanger(t *testing.T) {
 		}
 	})
 	t.Run("with labels", func(t *testing.T) {
-		cmd := newCmdMRanger(nameMRange, TS(secondMillennium), TS(thirdMillennium), []Filter{FilterEqual("l", "v")})
+		cmd := newCmdMRanger(nameMRange, secondMillennium, thirdMillennium, []Filter{FilterEqual("l", "v")})
 		MRangerWithLabels()(cmd)
 		want := []interface{}{
 			secondMillennium.UnixMilli(), thirdMillennium.UnixMilli(),
@@ -198,7 +198,7 @@ func TestCmdMRanger(t *testing.T) {
 		}
 	})
 	t.Run("selected labels", func(t *testing.T) {
-		cmd := newCmdMRanger(nameMRange, TS(secondMillennium), TS(thirdMillennium), []Filter{FilterEqual("l", "v")})
+		cmd := newCmdMRanger(nameMRange, secondMillennium, thirdMillennium, []Filter{FilterEqual("l", "v")})
 		MRangerWithLabels("l")(cmd)
 		want := []interface{}{
 			secondMillennium.UnixMilli(), thirdMillennium.UnixMilli(),
@@ -210,7 +210,7 @@ func TestCmdMRanger(t *testing.T) {
 		}
 	})
 	t.Run("count", func(t *testing.T) {
-		cmd := newCmdMRanger(nameMRange, TS(secondMillennium), TS(thirdMillennium), []Filter{FilterEqual("l", "v")})
+		cmd := newCmdMRanger(nameMRange, secondMillennium, thirdMillennium, []Filter{FilterEqual("l", "v")})
 		MRangerWithCount(100)(cmd)
 		want := []interface{}{
 			secondMillennium.UnixMilli(), thirdMillennium.UnixMilli(),
@@ -222,8 +222,8 @@ func TestCmdMRanger(t *testing.T) {
 		}
 	})
 	t.Run("align", func(t *testing.T) {
-		cmd := newCmdMRanger(nameMRange, TS(secondMillennium), TS(thirdMillennium), []Filter{FilterEqual("l", "v")})
-		MRangerWithAlign(TS(time.Unix(1500000000, 0)))(cmd)
+		cmd := newCmdMRanger(nameMRange, secondMillennium, thirdMillennium, []Filter{FilterEqual("l", "v")})
+		MRangerWithAlign(time.Unix(1500000000, 0))(cmd)
 		want := []interface{}{
 			secondMillennium.UnixMilli(), thirdMillennium.UnixMilli(),
 			"ALIGN", int64(1500000000000),
@@ -234,7 +234,7 @@ func TestCmdMRanger(t *testing.T) {
 		}
 	})
 	t.Run("aggregation", func(t *testing.T) {
-		cmd := newCmdMRanger(nameMRange, TS(secondMillennium), TS(thirdMillennium), []Filter{FilterEqual("l", "v")})
+		cmd := newCmdMRanger(nameMRange, secondMillennium, thirdMillennium, []Filter{FilterEqual("l", "v")})
 		MRangerWithAggregation(AggregationTypeAvg, time.Second)(cmd)
 		want := []interface{}{
 			secondMillennium.UnixMilli(), thirdMillennium.UnixMilli(),
@@ -246,7 +246,7 @@ func TestCmdMRanger(t *testing.T) {
 		}
 	})
 	t.Run("group by", func(t *testing.T) {
-		cmd := newCmdMRanger(nameMRange, TS(secondMillennium), TS(thirdMillennium), []Filter{FilterEqual("l", "v")})
+		cmd := newCmdMRanger(nameMRange, secondMillennium, thirdMillennium, []Filter{FilterEqual("l", "v")})
 		MRangerWithGroupBy("l", ReducerSum)(cmd)
 		want := []interface{}{
 			secondMillennium.UnixMilli(), thirdMillennium.UnixMilli(),
@@ -258,7 +258,7 @@ func TestCmdMRanger(t *testing.T) {
 		}
 	})
 	t.Run("args order", func(t *testing.T) {
-		cmd := newCmdMRanger(nameMRange, TS(secondMillennium), TS(thirdMillennium), []Filter{FilterEqual("l", "v")})
+		cmd := newCmdMRanger(nameMRange, secondMillennium, thirdMillennium, []Filter{FilterEqual("l", "v")})
 		want := []interface{}{
 			secondMillennium.UnixMilli(), thirdMillennium.UnixMilli(),
 			"FILTER_BY_TS", int64(1500000000000), int64(1600000000000),
@@ -274,16 +274,16 @@ func TestCmdMRanger(t *testing.T) {
 		MRangerWithValueFilter(0.2, 0.4)(cmd)
 		MRangerWithLabels()(cmd)
 		MRangerWithCount(100)(cmd)
-		MRangerWithAlign(TS(time.Unix(1500000000, 0)))(cmd)
+		MRangerWithAlign(time.Unix(1500000000, 0))(cmd)
 		MRangerWithAggregation(AggregationTypeAvg, time.Second)(cmd)
 		MRangerWithGroupBy("l", ReducerSum)(cmd)
 		if got := cmd.Args(); !reflect.DeepEqual(got, want) {
 			t.Errorf("Args() = %v, want %v", got, want)
 		}
-		cmd = newCmdMRanger(nameMRange, TS(secondMillennium), TS(thirdMillennium), []Filter{FilterEqual("l", "v")})
+		cmd = newCmdMRanger(nameMRange, secondMillennium, thirdMillennium, []Filter{FilterEqual("l", "v")})
 		MRangerWithGroupBy("l", ReducerSum)(cmd)
 		MRangerWithAggregation(AggregationTypeAvg, time.Second)(cmd)
-		MRangerWithAlign(TS(time.Unix(1500000000, 0)))(cmd)
+		MRangerWithAlign(time.Unix(1500000000, 0))(cmd)
 		MRangerWithCount(100)(cmd)
 		MRangerWithLabels()(cmd)
 		MRangerWithValueFilter(0.2, 0.4)(cmd)
@@ -317,8 +317,8 @@ func TestClient_MRange(t *testing.T) {
 				t.Fatalf("Create() error = %v", err)
 			}
 			_, err = tsclient.MAdd(ctx, []Sample{
-				NewSample(key, TS(secondMillennium), 1),
-				NewSample(key, TS(thirdMillennium), 2),
+				NewSample(key, secondMillennium, 1),
+				NewSample(key, thirdMillennium, 2),
 			})
 			if err != nil {
 				t.Fatalf("MAdd() error = %v", err)
@@ -379,8 +379,8 @@ func TestClient_Get(t *testing.T) {
 				t.Fatalf("Create() error = %v", err)
 			}
 			_, err = tsclient.MAdd(ctx, []Sample{
-				NewSample(key, TS(secondMillennium), 1),
-				NewSample(key, TS(thirdMillennium), 2),
+				NewSample(key, secondMillennium, 1),
+				NewSample(key, thirdMillennium, 2),
 			})
 			if err != nil {
 				t.Fatalf("MAdd() error = %v", err)
@@ -454,8 +454,8 @@ func TestClient_MGet(t *testing.T) {
 				t.Fatalf("Create() error = %v", err)
 			}
 			_, err = tsclient.MAdd(ctx, []Sample{
-				NewSample(key, TS(secondMillennium), 1),
-				NewSample(key, TS(thirdMillennium), 2),
+				NewSample(key, secondMillennium, 1),
+				NewSample(key, thirdMillennium, 2),
 			})
 			if err != nil {
 				t.Fatalf("MAdd() error = %v", err)

@@ -77,7 +77,7 @@ func (c *cmdAdd) Name() string {
 }
 
 func (c *cmdAdd) Args() []interface{} {
-	args := []interface{}{c.sample.Key, c.sample.Timestamp.Arg(), c.sample.Value}
+	args := []interface{}{c.sample.Key, timestampArg(c.sample.Timestamp), c.sample.Value}
 	if c.retention != nil {
 		args = append(args, optionNameRetention, c.retention.Milliseconds())
 	}
@@ -160,7 +160,7 @@ func (c *cmdMAdd) Name() string {
 func (c *cmdMAdd) Args() []interface{} {
 	var args []interface{}
 	for _, s := range c.samples {
-		args = append(args, s.Key, s.Timestamp.Arg(), s.Value)
+		args = append(args, s.Key, timestampArg(s.Timestamp), s.Value)
 	}
 	return args
 }

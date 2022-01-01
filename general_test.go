@@ -53,7 +53,7 @@ func TestClient_Info(t *testing.T) {
 			if err != nil {
 				t.Fatalf("Create() error = %v", err)
 			}
-			if _, err := tsclient.Add(ctx, NewSample(key, TS(secondMillennium), 1)); err != nil {
+			if _, err := tsclient.Add(ctx, NewSample(key, secondMillennium, 1)); err != nil {
 				t.Fatalf("Add() error = %v", err)
 			}
 			inf, err := tsclient.Info(ctx, key)
