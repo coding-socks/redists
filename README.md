@@ -54,6 +54,12 @@ It probably works with others, but it's not guaranteed. Feel free to open an iss
 
 **!IMPORTANT!** `MAdd` will not return a list of results in case of `github.com/mediocregopher/radix/v4` an issue was already opened: https://github.com/mediocregopher/radix/issues/305
 
+## Production readiness
+
+This project is still in alpha phase. In this stage the public API can change multiple times a day.
+
+Beta version will be considered when the feature set covers the documents the implementation is based on, and the public API reaches a mature state.
+
 ## Alternative libraries
 
 - [RedisTimeSeries/redistimeseries-go](https://github.com/RedisTimeSeries/redistimeseries-go)
