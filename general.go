@@ -8,19 +8,18 @@ import (
 	"time"
 )
 
-type Rule struct {
-	Key         string
-	Aggregation Aggregation
-}
+type Rules map[string]Aggregation
 
-func parseRule(is []interface{}) Rule {
-	return Rule{
-		Key: parseString(is[0]),
-		Aggregation: Aggregation{
+func parseRules(is []interface{}) map[string]Aggregation {
+	rs := make(map[string]Aggregation)
+	for _, v := range is {
+		is := v.([]interface{})
+		rs[parseString(is[0])] = Aggregation{
 			TimeBucket: time.Duration(is[1].(int64)) * time.Millisecond,
 			Type:       parseAggregationType(is[2]),
-		},
+		}
 	}
+	return rs
 }
 
 type ChunkInfo struct {
@@ -67,7 +66,7 @@ type Info struct {
 	DuplicatePolicy *DuplicatePolicy
 	Labels          Labels
 	SourceKey       string
-	Rules           []Rule
+	Rules           Rules
 	Chunks          []ChunkInfo
 }
 
@@ -108,9 +107,7 @@ func parseInfo(is []interface{}) Info {
 		case "sourceKey":
 			inf.SourceKey = parseString(val)
 		case "rules":
-			for _, v := range val.([]interface{}) {
-				inf.Rules = append(inf.Rules, parseRule(v.([]interface{})))
-			}
+			inf.Rules = parseRules(val.([]interface{}))
 		case "Chunks":
 			inf.Chunks = []ChunkInfo{}
 			for _, v := range val.([]interface{}) {
