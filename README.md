@@ -16,6 +16,7 @@ RedisTS was created during a coding spree which had the following focus:
 2. Type safety.
 3. Switched word order for better autocompletion and to follow the naming scheme used in stdlib (e.g. `http.MethodGet`, `http.StatusNotFound`).
 4. Compatibility with multiple Redis clients.
+5. Accept `time.Time` and `time.Duration` where a parameter is a timestamp in milliseconds or a duration in milliseconds.
 
 ## Get module
 
