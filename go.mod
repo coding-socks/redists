@@ -1,4 +1,4 @@
-module github.com/nerg4l/redists
+module github.com/coding-socks/redists
 
 go 1.17
 

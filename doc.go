@@ -11,7 +11,7 @@ The following example shows how to create a Doer implementation with GoRedis:
 	import (
 		"context"
 		goredis "github.com/go-redis/redis/v8"
-		"github.com/nerg4l/redists"
+		"github.com/coding-socks/redists"
 		"time"
 	)
 
@@ -60,7 +60,7 @@ The following example shows how to create a Doer implementation with Redigo:
 	import (
 		"context"
 		redigo "github.com/gomodule/redigo/redis"
-		"github.com/nerg4l/redists"
+		"github.com/coding-socks/redists"
 		"time"
 	)
 
@@ -107,7 +107,7 @@ The following example shows how to create a Doer implementation with RedisPipe:
 		"context"
 		redispipe "github.com/joomcode/redispipe/redis"
 		"github.com/joomcode/redispipe/redisconn"
-		"github.com/nerg4l/redists"
+		"github.com/coding-socks/redists"
 		"time"
 	)
 
@@ -156,7 +156,7 @@ The following example shows how to create a Doer implementation with Radix:
 	import (
 		"context"
 		"github.com/mediocregopher/radix/v4"
-		"github.com/nerg4l/redists"
+		"github.com/coding-socks/redists"
 		"time"
 	)
 

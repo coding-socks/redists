@@ -2,7 +2,7 @@
 
 RedisTS is a typesafe Go client for [RedisTimeSeries](github.com/RedisTimeSeries/RedisTimeSeries).
 
-[![Go Reference](https://pkg.go.dev/badge/github.com/nerg4l/redists.svg)](https://pkg.go.dev/github.com/nerg4l/redists)
+[![Go Reference](https://pkg.go.dev/badge/github.com/coding-socks/redists.svg)](https://pkg.go.dev/github.com/coding-socks/redists)
 
 RedisTimeSeries documentation: https://oss.redis.com/redistimeseries/commands/
 
@@ -20,7 +20,7 @@ RedisTS was created during a coding spree which had the following focus:
 ## Get module
 
 ```
-go get -u github.com/nerg4l/redists
+go get -u github.com/coding-socks/redists
 ```
 
 ## Running tests
