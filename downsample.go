@@ -2,7 +2,6 @@ package redists
 
 import (
 	"context"
-	"time"
 )
 
 type cmdCreateRule struct {
@@ -17,12 +16,12 @@ func (c *cmdCreateRule) Args() []interface{} {
 	return []interface{}{c.srcKey, c.destKey, optionNameAggregation, string(c.agg.Type), c.agg.TimeBucket.Milliseconds()}
 }
 
-func newCmdCreateRule(srcKey, destKey string, t AggregationType, timeBucket time.Duration) *cmdCreateRule {
+func newCmdCreateRule(srcKey, destKey string, t AggregationType, timeBucket Duration) *cmdCreateRule {
 	return &cmdCreateRule{srcKey: srcKey, destKey: destKey, agg: Aggregation{Type: t, TimeBucket: timeBucket}}
 }
 
 // CreateRule creates a compaction rule.
-func (c *Client) CreateRule(ctx context.Context, srcKey, destKey string, a AggregationType, timeBucket time.Duration) error {
+func (c *Client) CreateRule(ctx context.Context, srcKey, destKey string, a AggregationType, timeBucket Duration) error {
 	cmd := newCmdCreateRule(srcKey, destKey, a, timeBucket)
 	_, err := c.d.Do(ctx, cmd.Name(), cmd.Args()...)
 	return err

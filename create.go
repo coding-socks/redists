@@ -2,12 +2,11 @@ package redists
 
 import (
 	"context"
-	"time"
 )
 
 type cmdCreate struct {
 	key             string
-	retention       *time.Duration
+	retention       Duration
 	encoding        *Encoding
 	chunkSize       *int
 	duplicatePolicy *DuplicatePolicy
@@ -55,9 +54,9 @@ func (c *Client) Create(ctx context.Context, key string, options ...OptionCreate
 	return err
 }
 
-func CreateWithRetention(r time.Duration) OptionCreate {
+func CreateWithRetention(r Duration) OptionCreate {
 	return func(cmd *cmdCreate) {
-		cmd.retention = &r
+		cmd.retention = r
 	}
 }
 

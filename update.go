@@ -8,7 +8,7 @@ import (
 
 type cmdAlter struct {
 	key       string
-	retention *time.Duration
+	retention Duration
 	labels    map[string]string
 }
 
@@ -44,9 +44,9 @@ func (c *Client) Alter(ctx context.Context, key string, options ...OptionAlter) 
 	return err
 }
 
-func AlterWithRetention(r time.Duration) OptionAlter {
+func AlterWithRetention(r Duration) OptionAlter {
 	return func(cmd *cmdAlter) {
-		cmd.retention = &r
+		cmd.retention = r
 	}
 }
 
@@ -58,7 +58,7 @@ func AlterWithLabels(ls Labels) OptionAlter {
 
 type cmdAdd struct {
 	sample          Sample
-	retention       *time.Duration
+	retention       Duration
 	encoding        *Encoding
 	chunkSize       *int
 	duplicatePolicy *DuplicatePolicy
@@ -109,9 +109,9 @@ func (c *Client) Add(ctx context.Context, s Sample, options ...OptionAdd) (time.
 	return time.UnixMilli(res.(int64)), err
 }
 
-func AddWithRetention(r time.Duration) OptionAdd {
+func AddWithRetention(r Duration) OptionAdd {
 	return func(cmd *cmdAdd) {
-		cmd.retention = &r
+		cmd.retention = r
 	}
 }
 
@@ -208,7 +208,7 @@ type cmdCounter struct {
 	key       string
 	value     float64
 	timestamp *time.Time
-	retention *time.Duration
+	retention Duration
 	encoding  *Encoding
 	chunkSize *int
 	labels    map[string]string
@@ -267,9 +267,9 @@ func (c *Client) counter(ctx context.Context, name nameCounter, key string, valu
 	return time.UnixMilli(res.(int64)), err
 }
 
-func CounterWithRetention(r time.Duration) OptionCounter {
+func CounterWithRetention(r Duration) OptionCounter {
 	return func(cmd *cmdCounter) {
-		cmd.retention = &r
+		cmd.retention = r
 	}
 }
 

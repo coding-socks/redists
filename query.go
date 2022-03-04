@@ -118,7 +118,7 @@ func RangerWithAlign(a Timestamp) OptionRanger {
 	}
 }
 
-func RangerWithAggregation(t AggregationType, timeBucket time.Duration) OptionRanger {
+func RangerWithAggregation(t AggregationType, timeBucket Duration) OptionRanger {
 	return func(cmd *cmdRanger) {
 		cmd.aggregation = &Aggregation{Type: t, TimeBucket: timeBucket}
 	}
@@ -280,7 +280,7 @@ func MRangerWithAlign(a Timestamp) OptionMRanger {
 	}
 }
 
-func MRangerWithAggregation(t AggregationType, timeBucket time.Duration) OptionMRanger {
+func MRangerWithAggregation(t AggregationType, timeBucket Duration) OptionMRanger {
 	return func(cmd *cmdMRanger) {
 		cmd.aggregation = &Aggregation{Type: t, TimeBucket: timeBucket}
 	}

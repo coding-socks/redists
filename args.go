@@ -98,7 +98,7 @@ func parseAggregationType(i interface{}) AggregationType {
 
 type Aggregation struct {
 	Type       AggregationType
-	TimeBucket time.Duration
+	TimeBucket Duration
 }
 
 type Labels map[string]string
@@ -168,6 +168,10 @@ func FilterNotEqual(label string, values ...string) Filter {
 type valueFilter struct {
 	min float64
 	max float64
+}
+
+type Duration interface {
+	Milliseconds() int64
 }
 
 type Timestamp interface {
