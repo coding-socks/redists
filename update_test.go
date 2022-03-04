@@ -25,6 +25,20 @@ func TestCmdAlter(t *testing.T) {
 			t.Errorf("Args() = %v, want %v", got, want)
 		}
 	})
+	t.Run("chunk size", func(t *testing.T) {
+		cmd := newCmdAlter("key:any")
+		AlterWithChunkSize(8)(cmd)
+		if got, want := cmd.Args(), []interface{}{"key:any", "CHUNK_SIZE", 8}; !reflect.DeepEqual(got, want) {
+			t.Errorf("Args() = %v, want %v", got, want)
+		}
+	})
+	t.Run("duplicate policy", func(t *testing.T) {
+		cmd := newCmdAlter("key:any")
+		AlterWithDuplicatePolicy(DuplicatePolicyBlock)(cmd)
+		if got, want := cmd.Args(), []interface{}{"key:any", "DUPLICATE_POLICY", "BLOCK"}; !reflect.DeepEqual(got, want) {
+			t.Errorf("Args() = %v, want %v", got, want)
+		}
+	})
 	t.Run("label", func(t *testing.T) {
 		cmd := newCmdAlter("key:any")
 		AlterWithLabels(Labels{
@@ -40,15 +54,21 @@ func TestCmdAlter(t *testing.T) {
 		want := []interface{}{
 			"key:any",
 			"RETENTION", int64(1000),
+			"CHUNK_SIZE", 8,
+			"DUPLICATE_POLICY", "BLOCK",
 			"LABELS", "label:any", "value:any",
 		}
 		AlterWithRetention(time.Second)(cmd)
+		AlterWithChunkSize(8)(cmd)
+		AlterWithDuplicatePolicy(DuplicatePolicyBlock)(cmd)
 		AlterWithLabels(Labels{"label:any": "value:any"})(cmd)
 		if got := cmd.Args(); !reflect.DeepEqual(got, want) {
 			t.Errorf("Args() = %v, want %v", got, want)
 		}
 		cmd = newCmdAlter("key:any")
 		AlterWithLabels(Labels{"label:any": "value:any"})(cmd)
+		AlterWithDuplicatePolicy(DuplicatePolicyBlock)(cmd)
+		AlterWithChunkSize(8)(cmd)
 		AlterWithRetention(time.Second)(cmd)
 		if got := cmd.Args(); !reflect.DeepEqual(got, want) {
 			t.Errorf("Args() = %v, want %v", got, want)

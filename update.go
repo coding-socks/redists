@@ -7,9 +7,11 @@ import (
 )
 
 type cmdAlter struct {
-	key       string
-	retention Duration
-	labels    map[string]string
+	key             string
+	retention       Duration
+	chunkSize       *int
+	duplicatePolicy *DuplicatePolicy
+	labels          map[string]string
 }
 
 func newCmdAlter(key string) *cmdAlter {
@@ -24,6 +26,12 @@ func (c *cmdAlter) Args() []interface{} {
 	args := []interface{}{c.key}
 	if c.retention != nil {
 		args = append(args, optionNameRetention, c.retention.Milliseconds())
+	}
+	if c.chunkSize != nil {
+		args = append(args, optionNameChunkSize, *c.chunkSize)
+	}
+	if c.duplicatePolicy != nil {
+		args = append(args, optionNameDuplicatePolicy, string(*c.duplicatePolicy))
 	}
 	if c.labels != nil {
 		args = append(args, optionNameLabels)
@@ -47,6 +55,18 @@ func (c *Client) Alter(ctx context.Context, key string, options ...OptionAlter) 
 func AlterWithRetention(r Duration) OptionAlter {
 	return func(cmd *cmdAlter) {
 		cmd.retention = r
+	}
+}
+
+func AlterWithChunkSize(cs int) OptionAlter {
+	return func(cmd *cmdAlter) {
+		cmd.chunkSize = &cs
+	}
+}
+
+func AlterWithDuplicatePolicy(dp DuplicatePolicy) OptionAlter {
+	return func(cmd *cmdAlter) {
+		cmd.duplicatePolicy = &dp
 	}
 }
 
