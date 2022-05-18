@@ -8,6 +8,7 @@ import (
 	redispipe "github.com/joomcode/redispipe/redis"
 	"github.com/joomcode/redispipe/redisconn"
 	"github.com/mediocregopher/radix/v4"
+	"github.com/mediocregopher/radix/v4/resp"
 	"io"
 	"testing"
 	"time"
@@ -41,6 +42,9 @@ type radixDoer struct {
 func (f radixDoer) Do(ctx context.Context, cmd string, args ...interface{}) (interface{}, error) {
 	var val interface{}
 	err := f.Client.Do(ctx, radix.FlatCmd(&val, cmd, args...))
+	if e, ok := val.(error); err == nil && ok {
+		return nil, e
+	}
 	return val, err
 }
 
@@ -93,7 +97,14 @@ var doerTests = []struct {
 	{
 		name: "radix",
 		doer: func(ctx context.Context) (doCloser, error) {
-			client, err := (radix.PoolConfig{}).New(ctx, "tcp", "localhost:6379")
+			d := radix.Dialer{
+				NewRespOpts: func() *resp.Opts {
+					opts := resp.NewOpts()
+					opts.DisableErrorBubbling = true
+					return opts
+				},
+			}
+			client, err := (radix.PoolConfig{Dialer: d}).New(ctx, "tcp", "localhost:6379")
 			if err != nil {
 				return nil, err
 			}

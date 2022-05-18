@@ -46,6 +46,10 @@ func TestClient_Info(t *testing.T) {
 			defer doer.Do(context.Background(), "DEL", key)
 
 			tsclient := NewClient(doer)
+			_, err = tsclient.Info(ctx, key)
+			if wantErr := true; (err != nil) != wantErr {
+				t.Fatalf("Info() error = %v, wantErr = %v", err, wantErr)
+			}
 			err = tsclient.Create(ctx, key,
 				CreateWithRetention(time.Hour),
 				CreateWithLabels(Labels{"l": "v"}),

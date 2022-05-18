@@ -6,7 +6,7 @@ require (
 	github.com/go-redis/redis/v8 v8.11.4
 	github.com/gomodule/redigo v1.8.6
 	github.com/joomcode/redispipe v0.9.4
-	github.com/mediocregopher/radix/v4 v4.0.0
+	github.com/mediocregopher/radix/v4 v4.1.0
 )
 
 require (
@@ -15,5 +15,5 @@ require (
 	github.com/garyburd/redigo v1.6.3 // indirect
 	github.com/joomcode/errorx v1.0.3 // indirect
 	github.com/mediocregopher/radix.v2 v0.0.0-20181115013041-b67df6e626f9 // indirect
-	github.com/tilinna/clock v1.0.2 // indirect
+	github.com/tilinna/clock v1.1.0 // indirect
 )

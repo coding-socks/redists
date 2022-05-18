@@ -53,8 +53,6 @@ RedisTS is tested with the following clients:
 
 It probably works with others, but it's not guaranteed. Feel free to open an issue to get support for other clients, because if it isn't too much effort it will be added to the list above.
 
-**!IMPORTANT!** `MAdd` will not return a list of results in case of an error when used with `github.com/mediocregopher/radix/v4`. An issue was already opened: https://github.com/mediocregopher/radix/issues/305
-
 ## Production readiness
 
 This project is still in alpha phase. In this stage the public API can change multiple times a day.

@@ -147,8 +147,6 @@ The following example shows how to create a Doer implementation with RedisPipe:
 
 Creating a client with Radix
 
-**!IMPORTANT!** `MAdd` will not return a list of results in case of an error when used with `github.com/mediocregopher/radix/v4`. An issue was already opened: https://github.com/mediocregopher/radix/issues/305
-
 The following example shows how to create a Doer implementation with Radix:
 
 	package main
@@ -167,11 +165,21 @@ The following example shows how to create a Doer implementation with Radix:
 	func (f radixDoer) Do(ctx context.Context, cmd string, args ...interface{}) (interface{}, error) {
 		var val interface{}
 		err := f.c.Do(ctx, radix.FlatCmd(&val, cmd, args...))
+		if e, ok := val.(error); err == nil && ok {
+			return nil, e
+		}
 		return val, err
 	}
 
 	func main() {
-		client, err := (radix.PoolConfig{}).New(context.Background(), "tcp", "localhost:6379")
+		d := radix.Dialer{
+			NewRespOpts: func() *resp.Opts {
+				opts := resp.NewOpts()
+				opts.DisableErrorBubbling = true
+				return opts
+			},
+		}
+		client, err := (radix.PoolConfig{Dialer: d}).New(context.Background(), "tcp", "localhost:6379")
 		if err != nil {
 			panic(err)
 		}

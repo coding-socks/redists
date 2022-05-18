@@ -300,12 +300,6 @@ func TestClient_MAdd(t *testing.T) {
 				NewSample(unknownKey, secondMillennium, 1),
 				NewSample(key, thirdMillennium, 2),
 			})
-			if tt.name == "radix" { // https://github.com/mediocregopher/radix/issues/305
-				if wantErr := true; (err != nil) != wantErr {
-					t.Errorf("MAdd() error = %v, wantErr = %v", err, wantErr)
-				}
-				return
-			}
 			if err != nil {
 				t.Fatalf("MAdd() error = %v", err)
 			}
