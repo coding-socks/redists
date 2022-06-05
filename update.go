@@ -227,7 +227,7 @@ type cmdCounter struct {
 	name      nameCounter
 	key       string
 	value     float64
-	timestamp Timestamp
+	timestamp *time.Time
 	retention Duration
 	encoding  *Encoding
 	chunkSize *int
@@ -293,9 +293,9 @@ func CounterWithRetention(r Duration) OptionCounter {
 	}
 }
 
-func CounterWithTimestamp(t Timestamp) OptionCounter {
+func CounterWithTimestamp(t time.Time) OptionCounter {
 	return func(cmd *cmdCounter) {
-		cmd.timestamp = t
+		cmd.timestamp = &t
 	}
 }
 
