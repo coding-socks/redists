@@ -12,6 +12,7 @@ type cmdCreateRule struct {
 func (c *cmdCreateRule) Name() string {
 	return "TS.CREATERULE"
 }
+
 func (c *cmdCreateRule) Args() []interface{} {
 	return []interface{}{c.srcKey, c.destKey, optionNameAggregation, string(c.agg.Type), c.agg.TimeBucket.Milliseconds()}
 }
