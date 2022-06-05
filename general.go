@@ -15,8 +15,8 @@ func parseRules(is []interface{}) map[string]Aggregation {
 	for _, v := range is {
 		is := v.([]interface{})
 		rs[parseString(is[0])] = Aggregation{
-			TimeBucket: time.Duration(is[1].(int64)) * time.Millisecond,
-			Type:       parseAggregationType(is[2]),
+			Bucket: time.Duration(is[1].(int64)) * time.Millisecond,
+			Type:   parseAggregationType(is[2]),
 		}
 	}
 	return rs

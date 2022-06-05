@@ -111,8 +111,8 @@ func parseAggregationType(i interface{}) AggregationType {
 }
 
 type Aggregation struct {
-	Type       AggregationType
-	TimeBucket Duration
+	Type   AggregationType
+	Bucket Duration
 }
 
 type Labels map[string]string

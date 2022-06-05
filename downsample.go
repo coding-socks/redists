@@ -14,16 +14,16 @@ func (c *cmdCreateRule) Name() string {
 }
 
 func (c *cmdCreateRule) Args() []interface{} {
-	return []interface{}{c.srcKey, c.destKey, optionNameAggregation, string(c.agg.Type), c.agg.TimeBucket.Milliseconds()}
+	return []interface{}{c.srcKey, c.destKey, optionNameAggregation, string(c.agg.Type), c.agg.Bucket.Milliseconds()}
 }
 
-func newCmdCreateRule(srcKey, destKey string, t AggregationType, timeBucket Duration) *cmdCreateRule {
-	return &cmdCreateRule{srcKey: srcKey, destKey: destKey, agg: Aggregation{Type: t, TimeBucket: timeBucket}}
+func newCmdCreateRule(srcKey, destKey string, t AggregationType, bucket Duration) *cmdCreateRule {
+	return &cmdCreateRule{srcKey: srcKey, destKey: destKey, agg: Aggregation{Type: t, Bucket: bucket}}
 }
 
 // CreateRule creates a compaction rule.
-func (c *Client) CreateRule(ctx context.Context, srcKey, destKey string, a AggregationType, timeBucket Duration) error {
-	cmd := newCmdCreateRule(srcKey, destKey, a, timeBucket)
+func (c *Client) CreateRule(ctx context.Context, srcKey, destKey string, a AggregationType, bucket Duration) error {
+	cmd := newCmdCreateRule(srcKey, destKey, a, bucket)
 	_, err := c.d.Do(ctx, cmd.Name(), cmd.Args()...)
 	return err
 }

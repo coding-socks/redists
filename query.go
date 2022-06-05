@@ -61,7 +61,7 @@ func (c *cmdRanger) Args() []interface{} {
 		args = append(args, optionNameAlign, timestampArg(*c.align))
 	}
 	if c.aggregation != nil {
-		args = append(args, optionNameAggregation, string(c.aggregation.Type), c.aggregation.TimeBucket.Milliseconds())
+		args = append(args, optionNameAggregation, string(c.aggregation.Type), c.aggregation.Bucket.Milliseconds())
 	}
 	return args
 }
@@ -118,9 +118,9 @@ func RangerWithAlign(a Timestamp) OptionRanger {
 	}
 }
 
-func RangerWithAggregation(t AggregationType, timeBucket Duration) OptionRanger {
+func RangerWithAggregation(t AggregationType, bucket Duration) OptionRanger {
 	return func(cmd *cmdRanger) {
-		cmd.aggregation = &Aggregation{Type: t, TimeBucket: timeBucket}
+		cmd.aggregation = &Aggregation{Type: t, Bucket: bucket}
 	}
 }
 
@@ -206,7 +206,7 @@ func (c *cmdMRanger) Args() []interface{} {
 		args = append(args, optionNameAlign, timestampArg(*c.align))
 	}
 	if c.aggregation != nil {
-		args = append(args, optionNameAggregation, string(c.aggregation.Type), c.aggregation.TimeBucket.Milliseconds())
+		args = append(args, optionNameAggregation, string(c.aggregation.Type), c.aggregation.Bucket.Milliseconds())
 	}
 	args = append(args, optionNameFilter)
 	for i := range c.filters {
@@ -280,9 +280,9 @@ func MRangerWithAlign(a Timestamp) OptionMRanger {
 	}
 }
 
-func MRangerWithAggregation(t AggregationType, timeBucket Duration) OptionMRanger {
+func MRangerWithAggregation(t AggregationType, bucket Duration) OptionMRanger {
 	return func(cmd *cmdMRanger) {
-		cmd.aggregation = &Aggregation{Type: t, TimeBucket: timeBucket}
+		cmd.aggregation = &Aggregation{Type: t, Bucket: bucket}
 	}
 }
 
