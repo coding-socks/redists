@@ -28,10 +28,10 @@ type cmdRanger struct {
 	key         string
 	from        Timestamp
 	to          Timestamp
-	tsFilter    []time.Time
+	tsFilter    []Timestamp
 	valueFilter *valueFilter
 	count       *int64
-	align       *Timestamp
+	align       Timestamp
 	aggregation *Aggregation
 }
 
@@ -58,7 +58,7 @@ func (c *cmdRanger) Args() []interface{} {
 		args = append(args, optionNameCount, *c.count)
 	}
 	if c.align != nil {
-		args = append(args, optionNameAlign, timestampArg(*c.align))
+		args = append(args, optionNameAlign, timestampArg(c.align))
 	}
 	if c.aggregation != nil {
 		args = append(args, optionNameAggregation, string(c.aggregation.Type), c.aggregation.Bucket.Milliseconds())
@@ -94,7 +94,7 @@ func (c *Client) ranger(ctx context.Context, name nameRanger, key string, from T
 	return ds, err
 }
 
-func RangerWithTSFilter(tss ...time.Time) OptionRanger {
+func RangerWithTSFilter(tss ...Timestamp) OptionRanger {
 	return func(cmd *cmdRanger) {
 		cmd.tsFilter = tss
 	}
@@ -114,7 +114,7 @@ func RangerWithCount(c int64) OptionRanger {
 
 func RangerWithAlign(a Timestamp) OptionRanger {
 	return func(cmd *cmdRanger) {
-		cmd.align = &a
+		cmd.align = a
 	}
 }
 
@@ -161,11 +161,11 @@ type cmdMRanger struct {
 	from        Timestamp
 	to          Timestamp
 	filters     []Filter
-	tsFilter    []time.Time
+	tsFilter    []Timestamp
 	valueFilter *valueFilter
 	withLabels  []string
 	count       *int64
-	align       *Timestamp
+	align       Timestamp
 	aggregation *Aggregation
 	groupBy     *GroupBy
 }
@@ -203,7 +203,7 @@ func (c *cmdMRanger) Args() []interface{} {
 		args = append(args, optionNameCount, *c.count)
 	}
 	if c.align != nil {
-		args = append(args, optionNameAlign, timestampArg(*c.align))
+		args = append(args, optionNameAlign, timestampArg(c.align))
 	}
 	if c.aggregation != nil {
 		args = append(args, optionNameAggregation, string(c.aggregation.Type), c.aggregation.Bucket.Milliseconds())
@@ -246,7 +246,7 @@ func (c *Client) mRanger(ctx context.Context, name nameMRanger, from Timestamp, 
 	return ds, err
 }
 
-func MRangerWithTSFilter(tss ...time.Time) OptionMRanger {
+func MRangerWithTSFilter(tss ...Timestamp) OptionMRanger {
 	return func(cmd *cmdMRanger) {
 		cmd.tsFilter = tss
 	}
@@ -276,7 +276,7 @@ func MRangerWithCount(c int64) OptionMRanger {
 
 func MRangerWithAlign(a Timestamp) OptionMRanger {
 	return func(cmd *cmdMRanger) {
-		cmd.align = &a
+		cmd.align = a
 	}
 }
 
