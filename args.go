@@ -88,6 +88,7 @@ const (
 	AggregationTypeStdS  = AggregationType("STD.S")
 	AggregationTypeVarP  = AggregationType("VAR.P")
 	AggregationTypeVarS  = AggregationType("VAR.S")
+	AggregationTypeTWA   = AggregationType("TWA")
 )
 
 type AggregationType string
