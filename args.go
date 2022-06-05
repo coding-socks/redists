@@ -76,19 +76,32 @@ type GroupBy struct {
 }
 
 const (
-	AggregationTypeAvg   = AggregationType("AVG")
-	AggregationTypeSum   = AggregationType("SUM")
-	AggregationTypeMin   = AggregationType("MIN")
-	AggregationTypeMax   = AggregationType("MAX")
+	// AggregationTypeAvg aggregates arithmetic mean of all values
+	AggregationTypeAvg = AggregationType("AVG")
+	// AggregationTypeSum aggregates sum of all values
+	AggregationTypeSum = AggregationType("SUM")
+	// AggregationTypeMin aggregates minimum value
+	AggregationTypeMin = AggregationType("MIN")
+	// AggregationTypeMax aggregates maximum value
+	AggregationTypeMax = AggregationType("MAX")
+	// AggregationTypeRange aggregates difference between the highest and the lowest value
 	AggregationTypeRange = AggregationType("RANGE")
+	// AggregationTypeCount aggregates number of values
 	AggregationTypeCount = AggregationType("COUNT")
+	// AggregationTypeFirst aggregates the value with the lowest timestamp in the bucket
 	AggregationTypeFirst = AggregationType("FIRST")
-	AggregationTypeLast  = AggregationType("LAST")
-	AggregationTypeStdP  = AggregationType("STD.P")
-	AggregationTypeStdS  = AggregationType("STD.S")
-	AggregationTypeVarP  = AggregationType("VAR.P")
-	AggregationTypeVarS  = AggregationType("VAR.S")
-	AggregationTypeTWA   = AggregationType("TWA")
+	// AggregationTypeLast aggregates the value with the highest timestamp in the bucket
+	AggregationTypeLast = AggregationType("LAST")
+	// AggregationTypeStdP aggregates population standard deviation of the values
+	AggregationTypeStdP = AggregationType("STD.P")
+	// AggregationTypeStdS aggregates sample standard deviation of the values
+	AggregationTypeStdS = AggregationType("STD.S")
+	// AggregationTypeVarP aggregates population variance of the values
+	AggregationTypeVarP = AggregationType("VAR.P")
+	// AggregationTypeVarS aggregates sample variance of the values
+	AggregationTypeVarS = AggregationType("VAR.S")
+	// AggregationTypeTWA aggregates time-weighted average of all values
+	AggregationTypeTWA = AggregationType("TWA")
 )
 
 type AggregationType string
