@@ -2,12 +2,13 @@ package redists
 
 import (
 	"context"
+	"time"
 )
 
 type cmdCreateRule struct {
 	srcKey, destKey string
 	agg             Aggregation
-	alignTimestamp  Timestamp
+	alignTimestamp  *time.Time
 }
 
 func (c *cmdCreateRule) Name() string {
@@ -38,9 +39,9 @@ func (c *Client) CreateRule(ctx context.Context, srcKey, destKey string, a Aggre
 	return err
 }
 
-func CreateRuleWithAlignTimestamp(t Timestamp) OptionCreateRule {
+func CreateRuleWithAlignTimestamp(t time.Time) OptionCreateRule {
 	return func(cmd *cmdCreateRule) {
-		cmd.alignTimestamp = t
+		cmd.alignTimestamp = &t
 	}
 }
 
