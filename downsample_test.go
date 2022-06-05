@@ -18,6 +18,13 @@ func TestCmdCreateRule(t *testing.T) {
 			t.Errorf("Args() = %v, want %v", got, want)
 		}
 	})
+	t.Run("align timestamp", func(t *testing.T) {
+		cmd := newCmdCreateRule("key:src", "key:dst", AggregationTypeAvg, time.Second)
+		CreateRuleWithAlignTimestamp(time.UnixMilli(1001))(cmd)
+		if got, want := cmd.Args(), []interface{}{"key:src", "key:dst", "AGGREGATION", "AVG", int64(1000), int64(1001)}; !reflect.DeepEqual(got, want) {
+			t.Errorf("Args() = %v, want %v", got, want)
+		}
+	})
 }
 
 func TestClient_CreateRule(t *testing.T) {

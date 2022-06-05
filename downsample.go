@@ -7,6 +7,7 @@ import (
 type cmdCreateRule struct {
 	srcKey, destKey string
 	agg             Aggregation
+	alignTimestamp  Timestamp
 }
 
 func (c *cmdCreateRule) Name() string {
@@ -14,18 +15,33 @@ func (c *cmdCreateRule) Name() string {
 }
 
 func (c *cmdCreateRule) Args() []interface{} {
-	return []interface{}{c.srcKey, c.destKey, optionNameAggregation, string(c.agg.Type), c.agg.Bucket.Milliseconds()}
+	args := []interface{}{c.srcKey, c.destKey, optionNameAggregation, string(c.agg.Type), c.agg.Bucket.Milliseconds()}
+	if c.alignTimestamp != nil {
+		args = append(args, c.alignTimestamp.UnixMilli())
+	}
+	return args
 }
 
 func newCmdCreateRule(srcKey, destKey string, t AggregationType, bucket Duration) *cmdCreateRule {
 	return &cmdCreateRule{srcKey: srcKey, destKey: destKey, agg: Aggregation{Type: t, Bucket: bucket}}
 }
 
+type OptionCreateRule func(cmd *cmdCreateRule)
+
 // CreateRule creates a compaction rule.
-func (c *Client) CreateRule(ctx context.Context, srcKey, destKey string, a AggregationType, bucket Duration) error {
+func (c *Client) CreateRule(ctx context.Context, srcKey, destKey string, a AggregationType, bucket Duration, options ...OptionCreateRule) error {
 	cmd := newCmdCreateRule(srcKey, destKey, a, bucket)
+	for i := range options {
+		options[i](cmd)
+	}
 	_, err := c.d.Do(ctx, cmd.Name(), cmd.Args()...)
 	return err
+}
+
+func CreateRuleWithAlignTimestamp(t Timestamp) OptionCreateRule {
+	return func(cmd *cmdCreateRule) {
+		cmd.alignTimestamp = t
+	}
 }
 
 type cmdDeleteRule struct {
